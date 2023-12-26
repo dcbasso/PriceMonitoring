@@ -22,3 +22,42 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+#DANTE
+# Arquivos de compilação
+build/
+
+# Arquivos de configuração
+.idea/
+.gradle/
+gradle/
+
+# Arquivos de saída
+out/
+#build.gradle
+#build.gradle.kts
+
+# Diretório de artefatos do IntelliJ
+*.iml
+.idea/
+
+# Diretório de configuração do Eclipse
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+
+# Arquivos de usuário
+*.iml
+.idea/
+*.class
+
+# Dependências
+build/
+!gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+!**/src/integrationTest/**
+!**/src/functionalTest/**

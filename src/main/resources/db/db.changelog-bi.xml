@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.7.xsd">
+
+    <!-- BI START -->
+    <changeSet id="createDimensionProductTable" author="Dante Basso">
+        <createTable tableName="dimension_product">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="master_category" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unique_product_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createDimensionStoreTable" author="Dante Basso">
+        <createTable tableName="dimension_store">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createDimensionBrandTable" author="Dante Basso">
+        <createTable tableName="dimension_brand">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="createDimensionDateTimeTable" author="Dante Basso">
+        <createTable tableName="dimension_date">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="day" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="month" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="month_full" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="month_year" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_date" type="VARCHAR(8)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="createPriceHistoryTable" author="Dante Basso">
+        <createTable tableName="price_history">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="store_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_datetime" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="price_history" columnNames="id"/>
+        <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="product_id"
+                                 referencedTableName="dimension_product" referencedColumnNames="id"
+                                 constraintName="fk_price_history_product"/>
+        <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="store_id"
+                                 referencedTableName="dimension_store" referencedColumnNames="id"
+                                 constraintName="fk_price_history_store"/>
+        <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="id_datetime"
+                                 referencedTableName="dimension_date" referencedColumnNames="id"
+                                 constraintName="fk_price_history_date"/>
+    </changeSet>
+
+    <changeSet id="insertDimensionStore" author="Dante Basso">
+        <sql>
+            INSERT INTO dimension_store (id, name)
+            VALUES (gen_random_uuid(), 'Visão Vip');
+        </sql>
+    </changeSet>
+
+    <changeSet id="insertBrands" author="Dante Basso">
+        <sql>
+            <![CDATA[
+                INSERT INTO dimension_brand (id, name) VALUES
+                ('550e8400-e29b-41d4-a716-446655440000', 'Outra Marca'),
+                (gen_random_uuid(), 'Acer'),
+                (gen_random_uuid(), 'AFOX'),
+                (gen_random_uuid(), 'Amazon'),
+                (gen_random_uuid(), 'AMD'),
+                (gen_random_uuid(), 'APC'),
+                (gen_random_uuid(), 'APS'),
+                (gen_random_uuid(), 'Apple'),
+                (gen_random_uuid(), 'Arktek'),
+                (gen_random_uuid(), 'Asus'),
+                (gen_random_uuid(), 'Benq'),
+                (gen_random_uuid(), 'Biostar'),
+                (gen_random_uuid(), 'Cooler Master'),
+                (gen_random_uuid(), 'Corsair'),
+                (gen_random_uuid(), 'DarkFlash'),
+                (gen_random_uuid(), 'Dahua'),
+                (gen_random_uuid(), 'Dell'),
+                (gen_random_uuid(), 'Encore'),
+                (gen_random_uuid(), 'Epson'),
+                (gen_random_uuid(), 'EVGA'),
+                (gen_random_uuid(), 'Forza'),
+                (gen_random_uuid(), 'Gainward'),
+                (gen_random_uuid(), 'Galax'),
+                (gen_random_uuid(), 'Gigabyte'),
+                (gen_random_uuid(), 'GoLine'),
+                (gen_random_uuid(), 'Google'),
+                (gen_random_uuid(), 'Havit'),
+                (gen_random_uuid(), 'HP'),
+                (gen_random_uuid(), 'HYE'),
+                (gen_random_uuid(), 'HyperX'),
+                (gen_random_uuid(), 'Intel'),
+                (gen_random_uuid(), 'Infosec'),
+                (gen_random_uuid(), 'JBL'),
+                (gen_random_uuid(), 'JVC'),
+                (gen_random_uuid(), 'Keppdata'),
+                (gen_random_uuid(), 'Kingston'),
+                (gen_random_uuid(), 'Klip'),
+                (gen_random_uuid(), 'Kolke'),
+                (gen_random_uuid(), 'Lenovo'),
+                (gen_random_uuid(), 'LG'),
+                (gen_random_uuid(), 'Logitech'),
+                (gen_random_uuid(), 'Mercusys'),
+                (gen_random_uuid(), 'Microsoft'),
+                (gen_random_uuid(), 'Mikrotik'),
+                (gen_random_uuid(), 'Msi'),
+                (gen_random_uuid(), 'Multilaser'),
+                (gen_random_uuid(), 'Motorola'),
+                (gen_random_uuid(), 'MTek'),
+                (gen_random_uuid(), 'Nokia'),
+                (gen_random_uuid(), 'Palit'),
+                (gen_random_uuid(), 'Panasonic'),
+                (gen_random_uuid(), 'Patriot'),
+                (gen_random_uuid(), 'Philips'),
+                (gen_random_uuid(), 'PNY'),
+                (gen_random_uuid(), 'Quanta'),
+                (gen_random_uuid(), 'Razer'),
+                (gen_random_uuid(), 'Samsung'),
+                (gen_random_uuid(), 'Sandisk'),
+                (gen_random_uuid(), 'Satellite'),
+                (gen_random_uuid(), 'Star'),
+                (gen_random_uuid(), 'Tp-link'),
+                (gen_random_uuid(), 'Tek'),
+                (gen_random_uuid(), 'UBNT'),
+                (gen_random_uuid(), 'Viewsonic'),
+                (gen_random_uuid(), 'XFX'),
+                (gen_random_uuid(), 'Xiaomi'),
+                (gen_random_uuid(), 'Zotac');
+            ]]>
+        </sql>
+    </changeSet>
+
+    <!-- BI END -->
+
+
+</databaseChangeLog>
