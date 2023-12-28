@@ -15,7 +15,10 @@ class DimensionProductAdapter @Autowired constructor(
         code: String,
         description: String
     ): DimensionProduct {
-        val brand = locateBrand(description)
+        val allBrands = dimensionBrandRepository.findAll()
+        val defaultBrand = dimensionBrandRepository.findById(DimensionBrandRepository.ID_OUTRA_MARCA).get()
+
+        val brand = locateBrand(allBrands, defaultBrand, description)
 
         return DimensionProduct(
             productName = description,
@@ -27,16 +30,9 @@ class DimensionProductAdapter @Autowired constructor(
 
     }
 
-    private fun locateBrand(description: String): DimensionBrand {
-        val words = description.split(" ")
-        for (word in words) {
-            val foundBrand = dimensionBrandRepository.findByBrandNameIgnoreCase(word)
-            if (foundBrand != null) {
-                return foundBrand
-            }
-        }
-
-        return dimensionBrandRepository.findById(DimensionBrandRepository.ID_OUTRA_MARCA).get()
+    private fun locateBrand(allBrands: List<DimensionBrand>, defaultBrand: DimensionBrand, description: String): DimensionBrand {
+        return allBrands.firstOrNull {
+            description.contains(it.name, ignoreCase = true)
+        } ?: defaultBrand
     }
-
 }

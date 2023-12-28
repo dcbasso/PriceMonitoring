@@ -18,18 +18,21 @@ data class PriceHistory(
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    val product: DimensionProduct,
+    val dimensionProduct: DimensionProduct,
 
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
-    val store: DimensionStore,
+    val dimensionStore: DimensionStore,
 
     @ManyToOne
     @JoinColumn(name = "id_datetime", referencedColumnName = "id")
-    val dimensionDateTime: DimensionDate,
+    val dimensionDate: DimensionDate,
 
     @Column(nullable = false)
     val price: BigDecimal,
+
+    @Column(nullable = false)
+    val currency: String,
 
     @Column(name = "effective_date", nullable = false)
     val effectiveDate: LocalDateTime

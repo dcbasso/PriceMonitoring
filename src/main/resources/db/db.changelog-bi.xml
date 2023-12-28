@@ -56,7 +56,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="date" type="DATE">
-                <constraints nullable="false"/>
+                <constraints unique="true" nullable="false"/>
             </column>
             <column name="day" type="INT">
                 <constraints nullable="false"/>
@@ -65,6 +65,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="year" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="day_of_week" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="month_full" type="VARCHAR(255)">
@@ -103,6 +106,9 @@
             <column name="price" type="DECIMAL">
                 <constraints nullable="false"/>
             </column>
+            <column name="currency" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
             <column name="effective_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
@@ -129,75 +135,165 @@
     <changeSet id="insertBrands" author="Dante Basso">
         <sql>
             <![CDATA[
-                INSERT INTO dimension_brand (id, name) VALUES
-                ('550e8400-e29b-41d4-a716-446655440000', 'Outra Marca'),
-                (gen_random_uuid(), 'Acer'),
-                (gen_random_uuid(), 'AFOX'),
-                (gen_random_uuid(), 'Amazon'),
-                (gen_random_uuid(), 'AMD'),
-                (gen_random_uuid(), 'APC'),
-                (gen_random_uuid(), 'APS'),
-                (gen_random_uuid(), 'Apple'),
-                (gen_random_uuid(), 'Arktek'),
-                (gen_random_uuid(), 'Asus'),
-                (gen_random_uuid(), 'Benq'),
-                (gen_random_uuid(), 'Biostar'),
-                (gen_random_uuid(), 'Cooler Master'),
-                (gen_random_uuid(), 'Corsair'),
-                (gen_random_uuid(), 'DarkFlash'),
-                (gen_random_uuid(), 'Dahua'),
-                (gen_random_uuid(), 'Dell'),
-                (gen_random_uuid(), 'Encore'),
-                (gen_random_uuid(), 'Epson'),
-                (gen_random_uuid(), 'EVGA'),
-                (gen_random_uuid(), 'Forza'),
-                (gen_random_uuid(), 'Gainward'),
-                (gen_random_uuid(), 'Galax'),
-                (gen_random_uuid(), 'Gigabyte'),
-                (gen_random_uuid(), 'GoLine'),
-                (gen_random_uuid(), 'Google'),
-                (gen_random_uuid(), 'Havit'),
-                (gen_random_uuid(), 'HP'),
-                (gen_random_uuid(), 'HYE'),
-                (gen_random_uuid(), 'HyperX'),
-                (gen_random_uuid(), 'Intel'),
-                (gen_random_uuid(), 'Infosec'),
-                (gen_random_uuid(), 'JBL'),
-                (gen_random_uuid(), 'JVC'),
-                (gen_random_uuid(), 'Keppdata'),
-                (gen_random_uuid(), 'Kingston'),
-                (gen_random_uuid(), 'Klip'),
-                (gen_random_uuid(), 'Kolke'),
-                (gen_random_uuid(), 'Lenovo'),
-                (gen_random_uuid(), 'LG'),
-                (gen_random_uuid(), 'Logitech'),
-                (gen_random_uuid(), 'Mercusys'),
-                (gen_random_uuid(), 'Microsoft'),
-                (gen_random_uuid(), 'Mikrotik'),
-                (gen_random_uuid(), 'Msi'),
-                (gen_random_uuid(), 'Multilaser'),
-                (gen_random_uuid(), 'Motorola'),
-                (gen_random_uuid(), 'MTek'),
-                (gen_random_uuid(), 'Nokia'),
-                (gen_random_uuid(), 'Palit'),
-                (gen_random_uuid(), 'Panasonic'),
-                (gen_random_uuid(), 'Patriot'),
-                (gen_random_uuid(), 'Philips'),
-                (gen_random_uuid(), 'PNY'),
-                (gen_random_uuid(), 'Quanta'),
-                (gen_random_uuid(), 'Razer'),
-                (gen_random_uuid(), 'Samsung'),
-                (gen_random_uuid(), 'Sandisk'),
-                (gen_random_uuid(), 'Satellite'),
-                (gen_random_uuid(), 'Star'),
-                (gen_random_uuid(), 'Tp-link'),
-                (gen_random_uuid(), 'Tek'),
-                (gen_random_uuid(), 'UBNT'),
-                (gen_random_uuid(), 'Viewsonic'),
-                (gen_random_uuid(), 'XFX'),
-                (gen_random_uuid(), 'Xiaomi'),
-                (gen_random_uuid(), 'Zotac');
-            ]]>
+            INSERT INTO dimension_brand (id, name) VALUES
+            ('550e8400-e29b-41d4-a716-446655440000', 'Outra Marca'),
+            (gen_random_uuid(), '3Nstar'),
+            (gen_random_uuid(), 'ADATA'),
+            (gen_random_uuid(), 'AFOX'),
+            (gen_random_uuid(), 'Amazon'),
+            (gen_random_uuid(), 'Acer'),
+            (gen_random_uuid(), 'Aigo'),
+            (gen_random_uuid(), 'AMD'),
+            (gen_random_uuid(), 'APC'),
+            (gen_random_uuid(), 'APS'),
+            (gen_random_uuid(), 'Apple'),
+            (gen_random_uuid(), 'Argom Tech'),
+            (gen_random_uuid(), 'Arktek'),
+            (gen_random_uuid(), 'Asrock'),
+            (gen_random_uuid(), 'Asus'),
+            (gen_random_uuid(), 'Asustor'),
+            (gen_random_uuid(), 'Athomics'),
+            (gen_random_uuid(), 'Az-america'),
+            (gen_random_uuid(), 'Azza'),
+            (gen_random_uuid(), 'Bak'),
+            (gen_random_uuid(), 'Benq'),
+            (gen_random_uuid(), 'Biostar'),
+            (gen_random_uuid(), 'Blulory'),
+            (gen_random_uuid(), 'Brother'),
+            (gen_random_uuid(), 'Case Logic'),
+            (gen_random_uuid(), 'Centronics'),
+            (gen_random_uuid(), 'Cooler Master'),
+            (gen_random_uuid(), 'Corsair'),
+            (gen_random_uuid(), 'Cougar'),
+            (gen_random_uuid(), 'Crucial'),
+            (gen_random_uuid(), 'DarkFlash'),
+            (gen_random_uuid(), 'Dahua'),
+            (gen_random_uuid(), 'Denon'),
+            (gen_random_uuid(), 'Dell'),
+            (gen_random_uuid(), 'Dimension'),
+            (gen_random_uuid(), 'Duex'),
+            (gen_random_uuid(), 'Duosat'),
+            (gen_random_uuid(), 'Ecopower'),
+            (gen_random_uuid(), 'Encore'),
+            (gen_random_uuid(), 'Epson'),
+            (gen_random_uuid(), 'EVGA'),
+            (gen_random_uuid(), 'Ezviz'),
+            (gen_random_uuid(), 'FTX'),
+            (gen_random_uuid(), 'Forza'),
+            (gen_random_uuid(), 'Gainward'),
+            (gen_random_uuid(), 'Galax'),
+            (gen_random_uuid(), 'Gigabyte'),
+            (gen_random_uuid(), 'GoLine'),
+            (gen_random_uuid(), 'Google'),
+            (gen_random_uuid(), 'Golink'),
+            (gen_random_uuid(), 'Havit'),
+            (gen_random_uuid(), 'Hiksemi'),
+            (gen_random_uuid(), 'Hikvision'),
+            (gen_random_uuid(), 'Honeywell'),
+            (gen_random_uuid(), 'HP'),
+            (gen_random_uuid(), 'HYE'),
+            (gen_random_uuid(), 'Haylou'),
+            (gen_random_uuid(), 'Hubble Connected'),
+            (gen_random_uuid(), 'Hetzer'),
+            (gen_random_uuid(), 'Hikvision'),
+            (gen_random_uuid(), 'Honeywell'),
+            (gen_random_uuid(), 'HTV'),
+            (gen_random_uuid(), 'Huawei'),
+            (gen_random_uuid(), 'HyperX'),
+            (gen_random_uuid(), 'Ibest'),
+            (gen_random_uuid(), 'Imilab'),
+            (gen_random_uuid(), 'Infosec'),
+            (gen_random_uuid(), 'Intel'),
+            (gen_random_uuid(), 'Interbras'),
+            (gen_random_uuid(), 'JBL'),
+            (gen_random_uuid(), 'JVC'),
+            (gen_random_uuid(), 'Keepdata'),
+            (gen_random_uuid(), 'Kingspec'),
+            (gen_random_uuid(), 'Kingston'),
+            (gen_random_uuid(), 'Klip'),
+            (gen_random_uuid(), 'Kolke'),
+            (gen_random_uuid(), 'LG'),
+            (gen_random_uuid(), 'Lian Li'),
+            (gen_random_uuid(), 'Linksys'),
+            (gen_random_uuid(), 'Logitech'),
+            (gen_random_uuid(), 'Macrovip'),
+            (gen_random_uuid(), 'Mannatech'),
+            (gen_random_uuid(), 'Manhattan'),
+            (gen_random_uuid(), 'Markvision'),
+            (gen_random_uuid(), 'Mercusys'),
+            (gen_random_uuid(), 'Microfins'),
+            (gen_random_uuid(), 'Micron'),
+            (gen_random_uuid(), 'Microsoft'),
+            (gen_random_uuid(), 'Mikrotik'),
+            (gen_random_uuid(), 'Msi'),
+            (gen_random_uuid(), 'Multilaser'),
+            (gen_random_uuid(), 'Motorola'),
+            (gen_random_uuid(), 'MTek'),
+            (gen_random_uuid(), 'Nexxt'),
+            (gen_random_uuid(), 'Nokia'),
+            (gen_random_uuid(), 'Onida'),
+            (gen_random_uuid(), 'Onkyo'),
+            (gen_random_uuid(), 'Palit'),
+            (gen_random_uuid(), 'Panasonic'),
+            (gen_random_uuid(), 'Patriot'),
+            (gen_random_uuid(), 'Philips'),
+            (gen_random_uuid(), 'PNY'),
+            (gen_random_uuid(), 'Quanta'),
+            (gen_random_uuid(), 'QNAP'),
+            (gen_random_uuid(), 'Razer'),
+            (gen_random_uuid(), 'Redragon'),
+            (gen_random_uuid(), 'Roku'),
+            (gen_random_uuid(), 'Samsung'),
+            (gen_random_uuid(), 'Sandisk'),
+            (gen_random_uuid(), 'Satellite'),
+            (gen_random_uuid(), 'Sapphire'),
+            (gen_random_uuid(), 'Seagate'),
+            (gen_random_uuid(), 'Shure'),
+            (gen_random_uuid(), 'Sony'),
+            (gen_random_uuid(), 'Star'),
+            (gen_random_uuid(), 'Synology'),
+            (gen_random_uuid(), 'Targus'),
+            (gen_random_uuid(), 'Tek'),
+            (gen_random_uuid(), 'Thermaltake'),
+            (gen_random_uuid(), 'Tigre'),
+            (gen_random_uuid(), 'Toshiba'),
+            (gen_random_uuid(), 'Tp-link'),
+            (gen_random_uuid(), 'Unnion'),
+            (gen_random_uuid(), 'Unifi'),
+            (gen_random_uuid(), 'UPS'),
+            (gen_random_uuid(), 'Viewsonic'),
+            (gen_random_uuid(), 'Western'),
+            (gen_random_uuid(), 'WiWu'),
+            (gen_random_uuid(), 'XFX'),
+            (gen_random_uuid(), 'Yamaha'),
+            (gen_random_uuid(), 'Xiaomi'),
+            (gen_random_uuid(), 'Xtech'),
+            (gen_random_uuid(), 'Zebra'),
+            (gen_random_uuid(), 'Zkteco'),
+            (gen_random_uuid(), 'Zotac');
+        ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="insertDimensionDate" author="Dante Basso">
+        <sql splitStatements="false">
+        <![CDATA[
+        DO $$ DECLARE
+            current_day DATE := current_date;
+            meses_portugues VARCHAR[] := ARRAY['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            dias_da_semana_portugues VARCHAR[] := ARRAY['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        BEGIN
+            FOR i IN 1..3650 LOOP
+                INSERT INTO dimension_date (id, date, day, month, year, month_full, month_year, full_date, day_of_week)
+                VALUES
+                (gen_random_uuid(), current_day, EXTRACT(DAY FROM current_day), EXTRACT(MONTH FROM current_day), EXTRACT(YEAR FROM current_day),
+                 meses_portugues[EXTRACT(MONTH FROM current_day)], to_char(current_day, 'MMYYYY'), to_char(current_day, 'DDMMYYYY'),
+                dias_da_semana_portugues[EXTRACT(DOW FROM current_day) + 1]); -- Adicionamos 1 pois os arrays em PostgreSQL são baseados em 1
+
+                current_day := current_day + 1;
+            END LOOP;
+        END $$;
+        ]]>
         </sql>
     </changeSet>
 

@@ -37,7 +37,6 @@ class VisaoVipCapture @Autowired constructor(
         headers.set("Cache-Control", "max-age=0")
         headers.set("Connection", "keep-alive")
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
-        headers.set("Cookie", "_fbp=fb.1.1676474393978.1698996418; primefaces.download_index.xhtml=true; _ga_2J4J87E94X=GS1.1.1691776093.15.0.1691776103.50.0.0; _gcl_au=1.1.1040101341.1699293899; _ga=GA1.1.1546199250.1676474392; JSESSIONID=7ac7b9b581226590fdbd618e6101; X-Oracle-BMC-LBS-Route=b42d5bf7a0128f11bb7e55ed735c405e9f045e92fadbb75d74d28586d367676c3715a4107f3371b8; _ga_ET2JLJZ642=GS1.1.1703620148.80.0.1703620148.60.0.0")
         headers.set("Origin", "https://visaovip.com")
         headers.set("Referer", "https://visaovip.com/")
         headers.set("Sec-Fetch-Dest", "document")
@@ -49,8 +48,11 @@ class VisaoVipCapture @Autowired constructor(
         headers.set("sec-ch-ua", "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"")
         headers.set("sec-ch-ua-mobile", "?0")
         headers.set("sec-ch-ua-platform", "\"macOS\"")
+        headers.set("Cookie",
+            "_fbp=fb.1.1676474393978.1698996418; primefaces.download_index.xhtml=true; _ga_2J4J87E94X=GS1.1.1691776093.15.0.1691776103.50.0.0; _gcl_au=1.1.1040101341.1699293899; _ga=GA1.1.1546199250.1676474392; JSESSIONID=21eaaabc3dcd83e0385730758bd7; X-Oracle-BMC-LBS-Route=b42d5bf7a0128f11bb7e55ed735c405e9f045e9272af2a71fb282c17c0b5d2f5ad236f330f4843b2; _ga_ET2JLJZ642=GS1.1.1703795403.89.1.1703795404.59.0.0"
+        )
 
-        val body = "form-lista-preco=form-lista-preco&j_idt107=&javax.faces.ViewState=-3293888884515550799%3A2018774966923942912"
+        val body = "form-lista-preco=form-lista-preco&j_idt107=&javax.faces.ViewState=4612470195827800915%3A-2760493411388123288"
 
         val entity = HttpEntity(body, headers)
 

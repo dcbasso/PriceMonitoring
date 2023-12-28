@@ -25,7 +25,7 @@ class QuartzConfig {
         factoryBean.setJobDetail(visaoVipJobDetail)
         factoryBean.setStartDelay(0)
         factoryBean.setRepeatInterval(20000) // Intervalo de 20 segundos (ajuste conforme necessário)
-        factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY)
+        factoryBean.setRepeatCount(0) //SimpleTrigger.REPEAT_INDEFINITELY
         factoryBean.setName("visaoVipTrigger")
         return factoryBean
     }
