@@ -6,7 +6,9 @@ import jakarta.persistence.*
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "price_history")
+@Table(name = "price_history",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["product_id", "date_id"], name = "uk_price_history_product_date")]
+)
 data class PriceHistory(
     @Id
     @GeneratedValue
@@ -25,7 +27,7 @@ data class PriceHistory(
     val dimensionStore: DimensionStore,
 
     @ManyToOne
-    @JoinColumn(name = "id_datetime", referencedColumnName = "id")
+    @JoinColumn(name = "date_id", referencedColumnName = "id")
     val dimensionDate: DimensionDate,
 
     @Column(nullable = false)

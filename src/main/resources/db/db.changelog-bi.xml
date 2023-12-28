@@ -100,7 +100,7 @@
             <column name="store_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
-            <column name="id_datetime" type="UUID">
+            <column name="date_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
             <column name="price" type="DECIMAL">
@@ -120,9 +120,12 @@
         <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="store_id"
                                  referencedTableName="dimension_store" referencedColumnNames="id"
                                  constraintName="fk_price_history_store"/>
-        <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="id_datetime"
+        <addForeignKeyConstraint baseTableName="price_history" baseColumnNames="date_id"
                                  referencedTableName="dimension_date" referencedColumnNames="id"
                                  constraintName="fk_price_history_date"/>
+        <addUniqueConstraint tableName="price_history"
+                             columnNames="product_id, date_id"
+                             constraintName="uk_price_history_product_date"/>
     </changeSet>
 
     <changeSet id="insertDimensionStore" author="Dante Basso">
