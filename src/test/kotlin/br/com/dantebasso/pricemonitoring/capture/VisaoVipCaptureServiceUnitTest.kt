@@ -5,7 +5,7 @@ import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class VisaoVipCaptureUnitTest {
+class VisaoVipCaptureServiceUnitTest {
 
     @Autowired
     private lateinit var dimensionProductAdapter: DimensionProductAdapter
@@ -16,7 +16,7 @@ class VisaoVipCaptureUnitTest {
 
     @Test
     fun test() {
-        val toTest = VisaoVipCapture(
+        val toTest = VisaoVipCaptureService(
             processor = visaoVipLineProcessor
         )
         toTest.capture()
