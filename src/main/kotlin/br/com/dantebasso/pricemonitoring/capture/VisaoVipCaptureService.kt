@@ -13,11 +13,11 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 @Component
-class VisaoVipCapture @Autowired constructor(
+class VisaoVipCaptureService @Autowired constructor(
     private val processor: VisaoVipLineProcessor
 ): ICapture {
 
-    private val logger = LoggerFactory.getLogger(VisaoVipCapture::class.java)
+    private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
     override fun capture() {
         val url = "https://visaovip.com/"

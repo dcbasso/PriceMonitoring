@@ -1,6 +1,6 @@
 package br.com.dantebasso.pricemonitoring.capture.jobs
 
-import br.com.dantebasso.pricemonitoring.capture.VisaoVipCapture
+import br.com.dantebasso.pricemonitoring.capture.VisaoVipCaptureService
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.Job
 import org.quartz.JobExecutionContext
@@ -11,15 +11,14 @@ import org.springframework.stereotype.Component
 @Component
 @DisallowConcurrentExecution
 class VisaoVipJob @Autowired constructor(
-    private val visaoVipCapture: VisaoVipCapture
+    private val visaoVipCaptureService: VisaoVipCaptureService
 ) : Job {
 
     private val logger = LoggerFactory.getLogger(VisaoVipJob::class.java)
 
     override fun execute(context: JobExecutionContext) {
         logger.info("Executing VisaoVipJob...")
-
-        visaoVipCapture.capture()
+        visaoVipCaptureService.capture()
         logger.info("Execution VisaoVipJob Done...")
     }
 }

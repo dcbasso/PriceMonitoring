@@ -128,6 +128,62 @@
                              constraintName="uk_price_history_product_date"/>
     </changeSet>
 
+    <changeSet id="createDimensionCurrencyQuoteTable" author="Dante Basso">
+        <createTable tableName="dimension_currency_quote">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="usd" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eur" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brl" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ars" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jpy" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pyg" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="btc" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eth" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cny" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="id, date_id" constraintName="pk_dimension_currency_quote" tableName="dimension_currency_quote"/>
+        <addForeignKeyConstraint
+                baseTableName="dimension_currency_quote"
+                baseColumnNames="date_id"
+                referencedTableName="dimension_date" referencedColumnNames="id"
+                constraintName="fk_dimension_currency_quote_dimension_date"
+        />
+        <addUniqueConstraint
+                columnNames="date_id"
+                constraintName="uk_dimension_currency_quote_date_id"
+                tableName="dimension_currency_quote"
+        />
+    </changeSet>
+
+<!-- INSERTS -->
+
     <changeSet id="insertDimensionStore" author="Dante Basso">
         <sql>
             INSERT INTO dimension_store (id, name)
@@ -300,7 +356,6 @@
         </sql>
     </changeSet>
 
-    <!-- BI END -->
-
+<!-- INSERTS END -->
 
 </databaseChangeLog>
