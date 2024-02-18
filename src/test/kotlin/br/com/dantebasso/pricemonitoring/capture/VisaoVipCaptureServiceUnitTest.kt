@@ -1,25 +1,25 @@
 package br.com.dantebasso.pricemonitoring.capture
 
-import br.com.dantebasso.pricemonitoring.capture.adapters.DimensionProductAdapter
 import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(MockKExtension::class)
 class VisaoVipCaptureServiceUnitTest {
 
-    @Autowired
-    private lateinit var dimensionProductAdapter: DimensionProductAdapter
-
-    @Autowired
-    private lateinit var visaoVipLineProcessor: VisaoVipLineProcessor
-
+    @RelaxedMockK
+    lateinit var processorMockk: VisaoVipLineProcessor
 
     @Test
-    fun test() {
+    fun requestToWebsiteShouldTryProcessTheDownloadedFile() {
         val toTest = VisaoVipCaptureService(
-            processor = visaoVipLineProcessor
+            processor = processorMockk
         )
         toTest.capture()
+        verify(atLeast = 1) { processorMockk.processLine(any()) }
     }
 
 }

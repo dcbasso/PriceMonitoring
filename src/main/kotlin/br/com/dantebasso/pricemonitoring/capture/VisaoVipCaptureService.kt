@@ -12,6 +12,9 @@ import org.springframework.web.client.RestTemplate
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+import org.jsoup.Jsoup
+import java.net.URL
+
 @Component
 class VisaoVipCaptureService @Autowired constructor(
     private val processor: VisaoVipLineProcessor
@@ -19,9 +22,20 @@ class VisaoVipCaptureService @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
+    companion object {
+        const val URL_VISAOVIP = "https://www.visaovip.com"
+        const val XPATH_FIELD_VIEW_STATE_ELEMENT = "//*[@id=\"j_id1:javax.faces.ViewState:2\"]"
+        const val XPATH_FIELD_NAME_ELEMENT = "//*[@id=\"form-lista-preco\"]"
+        const val XPATH_BUTTON_ELEMENT = "//*[@class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left ui-button-flat botao-lista-preco\"]"
+        const val ATTR_FIELD_VIEW = "value"
+        const val ATTR_FIELD_NAME = "name"
+        const val ATTR_FIELD_ID = "id"
+    }
+
     override fun capture() {
         val url = "https://visaovip.com/"
         val restTemplate = RestTemplate()
+        val requestData = captureInfo()
 
         val headers = HttpHeaders()
         headers.accept = listOf(
@@ -44,18 +58,19 @@ class VisaoVipCaptureService @Autowired constructor(
         headers.set("Sec-Fetch-Site", "same-origin")
         headers.set("Sec-Fetch-User", "?1")
         headers.set("Upgrade-Insecure-Requests", "1")
-        headers.set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+        headers.set(
+            "User-Agent",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
         headers.set("sec-ch-ua", "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"")
         headers.set("sec-ch-ua-mobile", "?0")
         headers.set("sec-ch-ua-platform", "\"macOS\"")
-        headers.set("Cookie",
-            "_fbp=fb.1.1676474393978.1698996418; primefaces.download_index.xhtml=true; _ga_2J4J87E94X=GS1.1.1691776093.15.0.1691776103.50.0.0; _gcl_au=1.1.1040101341.1699293899; _ga=GA1.1.1546199250.1676474392; JSESSIONID=21eaaabc3dcd83e0385730758bd7; X-Oracle-BMC-LBS-Route=b42d5bf7a0128f11bb7e55ed735c405e9f045e9272af2a71fb282c17c0b5d2f5ad236f330f4843b2; _ga_ET2JLJZ642=GS1.1.1703795403.89.1.1703795404.59.0.0"
+        headers.set(
+            "Cookie",
+            "_fbp=fb.1.1676474393978.1698996418; primefaces.download_index.xhtml=true; _ga_2J4J87E94X=GS1.1.1691776093.15.0.1691776103.50.0.0; _gcl_au=1.1.1040101341.1699293899; _ga=GA1.1.1546199250.1676474392; ${requestData.cookies.get(0)}; ${requestData.cookies.get(1)}; _ga_ET2JLJZ642=GS1.1.1703795403.89.1.1703795404.59.0.0"
         )
-
-        val body = "form-lista-preco=form-lista-preco&j_idt107=&javax.faces.ViewState=4612470195827800915%3A-2760493411388123288"
-
+        val body = "form-lista-preco=${requestData.fieldNameValue}&${requestData.fieldButtonValue}=&javax.faces.ViewState=${requestData.fieldViewValue}"
         val entity = HttpEntity(body, headers)
-
         val responseEntity = restTemplate.exchange(
             url,
             HttpMethod.POST,
@@ -78,5 +93,46 @@ class VisaoVipCaptureService @Autowired constructor(
             logger.error("Falha ao baixar o arquivo. Código de status: ${responseEntity.statusCode}")
         }
     }
+
+    private fun captureInfo(): RequestData {
+        val connection = URL(URL_VISAOVIP).openConnection()
+        val html = connection.getInputStream().bufferedReader().use { it.readText() }
+        val document = Jsoup.parse(html)
+
+        val cookies = connection.getHeaderFields()
+            .flatMap { entry ->
+                if (entry.key != null && entry.key.equals("Set-Cookie", ignoreCase = true)) {
+                    entry.value
+                } else {
+                    emptyList()
+                }
+            }
+            .map { cookie ->
+                cookie.split(";\\s*".toRegex())
+                    .first() // Pegando apenas o valor do cookie, ignorando os parâmetros adicionais
+            }
+
+        val fieldViewStateElement = document.selectXpath(XPATH_FIELD_VIEW_STATE_ELEMENT)
+        val fieldNameElement = document.selectXpath(XPATH_FIELD_NAME_ELEMENT)
+        val fieldButtonElement = document.selectXpath(XPATH_BUTTON_ELEMENT)
+
+        val fieldViewValue = fieldViewStateElement.attr(ATTR_FIELD_VIEW)
+        val fieldNameValue = fieldNameElement.attr(ATTR_FIELD_NAME)
+        val fieldButtonValue = fieldButtonElement.attr(ATTR_FIELD_ID)
+
+        return RequestData(
+            fieldButtonValue = fieldButtonValue,
+            fieldNameValue = fieldNameValue,
+            fieldViewValue = fieldViewValue,
+            cookies = cookies
+        )
+    }
+
+    inner class RequestData(
+        val fieldViewValue: String,
+        val fieldNameValue: String,
+        val fieldButtonValue: String,
+        val cookies: List<String>
+    ) {}
 
 }
