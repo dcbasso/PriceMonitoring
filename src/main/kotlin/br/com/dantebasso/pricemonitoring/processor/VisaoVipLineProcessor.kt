@@ -39,7 +39,6 @@ class VisaoVipLineProcessor @Autowired constructor(
             val matchResult = REGEX_EXTRACT_DATA.find(line)
             matchResult?.let {
                 val (code, description, price) = it.destructured
-                logger.info("Valor: ${price.trim()}")
 
                 val dimensionProduct: DimensionProduct = dimensionProductService.findProductByName(name = description)
                     ?: adaptProductAndSave(code = code, description = description)
