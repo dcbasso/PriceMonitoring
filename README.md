@@ -21,4 +21,3 @@ Currencies:
 https://app.exchangerate-api.com/
 
 Cripto Currencies:
-https://www.coinapi.io/
