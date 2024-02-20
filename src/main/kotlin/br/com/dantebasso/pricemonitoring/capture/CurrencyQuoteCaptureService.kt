@@ -21,7 +21,8 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     private val apiKey: String,
     private val webClient: WebClient,
     private val dimensionDateService: DimensionDateService,
-    private val dimensionCurrencyQuoteService: DimensionCurrencyQuoteService
+    private val dimensionCurrencyQuoteService: DimensionCurrencyQuoteService,
+    private val objectMapper: ObjectMapper
 ): ICapture {
 
     private val logger = LoggerFactory.getLogger(CurrencyQuoteCaptureService::class.java)
@@ -31,39 +32,40 @@ class CurrencyQuoteCaptureService @Autowired constructor(
             .uri("https://v6.exchangerate-api.com/v6/$apiKey/latest/USD")
             .retrieve()
             .bodyToMono(String::class.java)
-            .map {
-                val objectMapper = ObjectMapper()
-                objectMapper.readTree(it)
+            .map { objectMapper.readTree(it) }
+            .map { it.path("conversion_rates") }
+            .map { createDimensionCurrencyQuote(it, getDimensionDate()) }
+            .doOnError { error ->
+                logger.error("Error to process currency quotes: ${error.message}")
             }
-            .map {
-                it.path("conversion_rates")
-            }
-            .map {
-                DimensionCurrencyQuote(
-                    USD = getQuoteValue(Currency.AMERICAN_DOLLAR, it),
-                    EUR = getQuoteValue(Currency.EURO, it),
-                    BRL = getQuoteValue(Currency.BRAZILIAN_REAL, it),
-                    ARS = getQuoteValue(Currency.ARGENTINE_PESO, it),
-                    JPY = getQuoteValue(Currency.JAPANESE_YEN, it),
-                    PYG = getQuoteValue(Currency.PARAGUAYAN_GUARANI, it),
-                    BTC = getQuoteValue(Currency.BITCOIN, it),
-                    ETH = getQuoteValue(Currency.ETHEREUM, it),
-                    CNY = getQuoteValue(Currency.CHINESE_YUAN, it),
-                    dimensionDate = getDimensionDate(),
-                    effectiveDate = LocalDateTime.now()
-                )
-            }
+            .switchIfEmpty(Mono.error(IllegalArgumentException("DimensionDate not found")))
             .map { dimensionCurrencyQuote ->
                 dimensionCurrencyQuoteService.saveCurrencyQuote(dimensionCurrencyQuote)
             }
-            .onErrorResume { error ->
-                logger.error(error.message)
-                Mono.error(error)
-            }
             .subscribe {
-                logger.error("Currency Quote capture executed with success.")
+                logger.info("Currency Quote capture executed with success.\"")
             }
     }
+
+    private fun createDimensionCurrencyQuote(
+        ratesNode: JsonNode,
+        dimensionDate: DimensionDate
+    ): DimensionCurrencyQuote {
+        return DimensionCurrencyQuote(
+            USD = getQuoteValue(Currency.AMERICAN_DOLLAR, ratesNode),
+            EUR = getQuoteValue(Currency.EURO, ratesNode),
+            BRL = getQuoteValue(Currency.BRAZILIAN_REAL, ratesNode),
+            ARS = getQuoteValue(Currency.ARGENTINE_PESO, ratesNode),
+            JPY = getQuoteValue(Currency.JAPANESE_YEN, ratesNode),
+            PYG = getQuoteValue(Currency.PARAGUAYAN_GUARANI, ratesNode),
+            BTC = getQuoteValue(Currency.BITCOIN, ratesNode),
+            ETH = getQuoteValue(Currency.ETHEREUM, ratesNode),
+            CNY = getQuoteValue(Currency.CHINESE_YUAN, ratesNode),
+            dimensionDate = dimensionDate,
+            effectiveDate = LocalDateTime.now()
+        )
+    }
+
 
     private fun getQuoteValue(currency: Currency, ratesNode: JsonNode): Double {
         return ratesNode.path(currency.code)?.asDouble() ?: 0.0
