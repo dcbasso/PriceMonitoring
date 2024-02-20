@@ -33,7 +33,6 @@ class VisaoVipCaptureService @Autowired constructor(
     }
 
     override fun capture() {
-        val url = "https://visaovip.com/"
         val restTemplate = RestTemplate()
         val requestData = captureInfo()
 
@@ -72,7 +71,7 @@ class VisaoVipCaptureService @Autowired constructor(
         val body = "form-lista-preco=${requestData.fieldNameValue}&${requestData.fieldButtonValue}=&javax.faces.ViewState=${requestData.fieldViewValue}"
         val entity = HttpEntity(body, headers)
         val responseEntity = restTemplate.exchange(
-            url,
+            URL_VISAOVIP,
             HttpMethod.POST,
             entity,
             String::class.java
@@ -90,7 +89,7 @@ class VisaoVipCaptureService @Autowired constructor(
 
             reader.close()
         } else {
-            logger.error("Falha ao baixar o arquivo. Código de status: ${responseEntity.statusCode}")
+            logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")
         }
     }
 

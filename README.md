@@ -13,4 +13,12 @@ SpringBoot
 
 ## Main objective
 
-Use IA (ChatGPT 3.5) to help creating all necessary code and check how much this IA could help a DEV to make all the necessary code
+Use IA (ChatGPT 3.5 and Google Gemini) to help creating all necessary code and check how much this IA could help a DEV to make all the necessary code
+
+# External/Vendors APIS
+
+Currencies:
+https://app.exchangerate-api.com/
+
+Cripto Currencies:
+https://www.coinapi.io/
