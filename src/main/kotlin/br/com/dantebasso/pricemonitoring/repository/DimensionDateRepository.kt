@@ -7,6 +7,6 @@ import java.util.UUID
 
 interface DimensionDateRepository : JpaRepository<DimensionDate, UUID> {
 
-    fun findByDate(date: LocalDate): DimensionDate?
+    fun findByDate(date: LocalDate): DimensionDate
 
 }

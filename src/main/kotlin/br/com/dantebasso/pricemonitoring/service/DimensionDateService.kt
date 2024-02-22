@@ -9,7 +9,7 @@ import java.time.LocalDate
 @Service
 class DimensionDateService @Autowired constructor(private val dimensionDateRepository: DimensionDateRepository) {
 
-    fun findByCurrentDate(): DimensionDate? {
+    fun findByCurrentDate(): DimensionDate {
         val currentDate = LocalDate.now()
         return dimensionDateRepository.findByDate(currentDate)
     }

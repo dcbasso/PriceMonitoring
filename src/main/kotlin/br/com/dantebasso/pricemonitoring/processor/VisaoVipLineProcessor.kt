@@ -38,8 +38,8 @@ class VisaoVipLineProcessor @Autowired constructor(
         if (line.matches(REGEX_LINE_VALIDATOR)) {
             val matchResult = REGEX_EXTRACT_DATA.find(line)
             matchResult?.let {
+                logger.info("Line processed: $line")
                 val (code, description, price) = it.destructured
-
                 val dimensionProduct: DimensionProduct = dimensionProductService.findProductByName(name = description)
                     ?: adaptProductAndSave(code = code, description = description)
                 val dimensionDate = getDimensionDate()
@@ -64,7 +64,7 @@ class VisaoVipLineProcessor @Autowired constructor(
                 }
             }
         } else {
-            logger.error("Line no processed: $line")
+            logger.error("Line not processed: $line")
         }
     }
 
