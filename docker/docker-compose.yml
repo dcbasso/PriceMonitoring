@@ -4,6 +4,8 @@ services:
 
   db:
     image: postgres
+    container_name: postgres_docker
+    hostname: postgres_docker
     restart: always
     environment:
       POSTGRES_PASSWORD: pricemonitoring
@@ -12,6 +14,16 @@ services:
 
   adminer:
     image: adminer
+    container_name: adminer_docker
+    hostname: adminer_docker
     restart: always
     ports:
       - 8090:8080
+
+  pricemonitoring:
+    image: dcbasso/price-monitoring
+    container_name: price-monitoring
+    hostname: price-monitoring
+    restart: always
+    ports:
+      - 8080:8080
