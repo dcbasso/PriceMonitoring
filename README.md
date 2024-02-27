@@ -21,3 +21,17 @@ Currencies:
 https://app.exchangerate-api.com/
 
 Cripto Currencies:
+
+# Docker
+
+on root folder, create the image:
+- When building on amd64:
+docker build -t dcbasso/price-monitoring -f docker/Dockerfile .
+
+- When building on Mac with M1/M2/M3 (arm64):
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t dcbasso/price-monitoring -f docker/Dockerfile .
+
+- Uploading to docker hub:
+docker push dcbasso/price-monitoring:latest
+
+

@@ -65,3 +65,11 @@ tasks.withType(KotlinCompile) {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'br.com.dantebasso.pricemonitoring.PriceMonitoringApplication'  // Substitua pelo nome completo da sua classe principal
+	}
+	archiveBaseName = 'pricemonitoring'
+	version = ''
+}
