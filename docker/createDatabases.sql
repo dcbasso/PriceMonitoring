@@ -1,0 +1,2 @@
+CREATE DATABASE pricemonitoring;
+CREATE DATABASE pricemonitoring_test;

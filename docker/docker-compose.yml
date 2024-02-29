@@ -4,13 +4,18 @@ services:
 
   db:
     image: postgres
-    container_name: postgres_docker
-    hostname: postgres_docker
+    container_name: postgres_pricemonitoring
+    hostname: postgres_pricemonitoring
     restart: always
     environment:
       POSTGRES_PASSWORD: pricemonitoring
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_pricemonitoring-volume:/var/lib/postgresql/data
+      - ./createDatabases.sql:/docker-entrypoint-initdb.d/create_database.sql
+    networks:
+      - price-monitoring-network
 
   adminer:
     image: adminer
@@ -19,11 +24,24 @@ services:
     restart: always
     ports:
       - 8090:8080
+    networks:
+      - price-monitoring-network
 
   pricemonitoring:
     image: dcbasso/price-monitoring
     container_name: price-monitoring
     hostname: price-monitoring
+    environment:
+       - "SPRING_PROFILES_ACTIVE=docker"
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - price-monitoring-network
+
+volumes:
+  postgres_pricemonitoring-volume:
+
+networks:
+  price-monitoring-network:
+    external: false
