@@ -1,6 +1,5 @@
 package br.com.dantebasso.pricemonitoring.processor
 
-import br.com.dantebasso.pricemonitoring.capture.adapters.DimensionProductAdapter
 import br.com.dantebasso.pricemonitoring.capture.adapters.PriceHistoryAdapter
 import br.com.dantebasso.pricemonitoring.models.bi.DimensionDate
 import br.com.dantebasso.pricemonitoring.models.bi.DimensionProduct
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class VisaoVipLineProcessor @Autowired constructor(
-    private val dimensionProductAdapter: DimensionProductAdapter,
     private val priceHistoryAdapter: PriceHistoryAdapter,
     private val dimensionProductService: DimensionProductService,
     private val dimensionDateService: DimensionDateService,
@@ -31,6 +29,7 @@ class VisaoVipLineProcessor @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(VisaoVipLineProcessor::class.java)
 
+
     /**
      *
      */
@@ -40,8 +39,10 @@ class VisaoVipLineProcessor @Autowired constructor(
             matchResult?.let {
                 logger.info("Line processed: $line")
                 val (code, description, price) = it.destructured
-                val dimensionProduct: DimensionProduct = dimensionProductService.findProductByName(name = description)
-                    ?: adaptProductAndSave(code = code, description = description)
+                val dimensionProduct: DimensionProduct = dimensionProductService.findProductByUniqueProductCodeOrCreate(
+                    productCode = code,
+                    description = description
+                )
                 val dimensionDate = getDimensionDate()
                 val dimensionStore = getDimensionStore()
 
@@ -53,7 +54,12 @@ class VisaoVipLineProcessor @Autowired constructor(
                             dimensionDate = dimensionDateNotNull,
                             priceAsText = price
                         )
-                        priceHistoryService.savePriceHistory(priceHistory)
+                        try {
+                            priceHistoryService.savePriceHistory(priceHistory)
+                            logger.info("Saved: ${priceHistory.dimensionDate.id} - ${priceHistory.dimensionProduct.id}")
+                        } catch (e: Exception) {
+                            logger.error("Error to process product: ${priceHistory.productCode} - ${priceHistory.brand} - ${priceHistory.dimensionProduct.productName}, error: ${e.message}")
+                        }
                     } ?: run {
                         // todo: exception
                         logger.error("Was not possible to locate the Dimension Store, nome: $STORE_NAME")
@@ -66,15 +72,6 @@ class VisaoVipLineProcessor @Autowired constructor(
         } else {
             logger.error("Line not processed: $line")
         }
-    }
-
-    private fun adaptProductAndSave(code: String, description: String): DimensionProduct {
-        return dimensionProductService.createProduct(
-            dimensionProductAdapter.adapt(
-                code = code,
-                description = description
-            )
-        )
     }
 
     private fun getDimensionStore(): DimensionStore? {

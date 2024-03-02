@@ -8,4 +8,6 @@ interface DimensionProductRepository : JpaRepository<DimensionProduct, UUID> {
 
     fun findByProductNameIgnoreCase(productName: String): DimensionProduct?
 
+    fun findByUniqueProductCodeIgnoreCase(productCode: String): DimensionProduct?
+
 }
