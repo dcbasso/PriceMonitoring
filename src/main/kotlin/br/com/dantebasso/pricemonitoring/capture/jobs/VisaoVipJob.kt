@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component
 @DisallowConcurrentExecution
 class VisaoVipJob @Autowired constructor(
     private val visaoVipCaptureService: VisaoVipCaptureService
-) : Job {
+) {
 
     private val logger = LoggerFactory.getLogger(VisaoVipJob::class.java)
 
-    @Scheduled(cron = "capture.cron.scheduled")
-    override fun execute(context: JobExecutionContext) {
+    @Scheduled(cron = "\${capture.cron.scheduled}")
+    fun execute() {
         logger.info("Executing VisaoVipJob...")
         visaoVipCaptureService.capture()
         logger.info("Execution VisaoVipJob Done...")
