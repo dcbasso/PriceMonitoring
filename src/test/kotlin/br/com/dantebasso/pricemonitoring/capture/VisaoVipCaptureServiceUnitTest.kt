@@ -4,7 +4,6 @@ import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

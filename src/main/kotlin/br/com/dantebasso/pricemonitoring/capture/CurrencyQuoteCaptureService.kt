@@ -5,7 +5,6 @@ import br.com.dantebasso.pricemonitoring.models.bi.DimensionDate
 import br.com.dantebasso.pricemonitoring.models.bi.enums.Currency
 import br.com.dantebasso.pricemonitoring.models.control.JobCaptureLog
 import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
-import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 import br.com.dantebasso.pricemonitoring.service.DimensionCurrencyQuoteService
 import br.com.dantebasso.pricemonitoring.service.DimensionDateService
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
