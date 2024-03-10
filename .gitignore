@@ -29,8 +29,8 @@ build/
 
 # Arquivos de configuração
 .idea/
-#.gradle/
-#gradle/
+.gradle/
+gradle/
 
 # Arquivos de saída
 out/
