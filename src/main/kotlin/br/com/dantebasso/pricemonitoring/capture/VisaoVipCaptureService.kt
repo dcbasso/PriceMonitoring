@@ -41,7 +41,6 @@ class VisaoVipCaptureService @Autowired constructor(
     }
 
     override fun capture() {
-        // TODO: validate if already runs the job, using the log, and if not run it again, and finish with success.
         if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
             val restTemplate = RestTemplate()
             val requestData = captureInfo()
