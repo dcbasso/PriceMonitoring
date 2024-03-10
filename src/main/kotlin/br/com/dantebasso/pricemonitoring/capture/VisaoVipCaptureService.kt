@@ -1,6 +1,10 @@
 package br.com.dantebasso.pricemonitoring.capture
 
+import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
+import br.com.dantebasso.pricemonitoring.models.control.JobCaptureLog
+import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
 import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
+import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -11,31 +15,120 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import java.io.BufferedReader
 import java.io.InputStreamReader
-
 import org.jsoup.Jsoup
 import java.net.URL
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Component
 class VisaoVipCaptureService @Autowired constructor(
-    private val processor: VisaoVipLineProcessor
+    private val processor: VisaoVipLineProcessor,
+    private val jobCaptureLogService: JobCaptureLogService
 ): ICapture {
 
     private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
     companion object {
-        const val URL_VISAOVIP = "https://www.visaovip.com"
-        const val XPATH_FIELD_VIEW_STATE_ELEMENT = "//*[@id=\"j_id1:javax.faces.ViewState:2\"]"
-        const val XPATH_FIELD_NAME_ELEMENT = "//*[@id=\"form-lista-preco\"]"
-        const val XPATH_BUTTON_ELEMENT = "//*[@class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left ui-button-flat botao-lista-preco\"]"
-        const val ATTR_FIELD_VIEW = "value"
-        const val ATTR_FIELD_NAME = "name"
-        const val ATTR_FIELD_ID = "id"
+        private val JOB_NAME = "VisaoVipCaptureService"
+        private const val JOB_URL = "https://www.visaovip.com"
+
+        private const val XPATH_FIELD_VIEW_STATE_ELEMENT = "//*[@id=\"j_id1:javax.faces.ViewState:2\"]"
+        private const val XPATH_FIELD_NAME_ELEMENT = "//*[@id=\"form-lista-preco\"]"
+        private const val XPATH_BUTTON_ELEMENT = "//*[@class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left ui-button-flat botao-lista-preco\"]"
+        private const val ATTR_FIELD_VIEW = "value"
+        private const val ATTR_FIELD_NAME = "name"
+        private const val ATTR_FIELD_ID = "id"
     }
 
     override fun capture() {
-        val restTemplate = RestTemplate()
-        val requestData = captureInfo()
+        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
+            val restTemplate = RestTemplate()
+            val requestData = captureInfo()
+            val headers = createHeaders(requestData)
+            val body = createBody(requestData)
+            val httpEntity = HttpEntity(body, headers)
+            val method = HttpMethod.POST
+            val responseEntity = restTemplate.exchange(
+                JOB_URL,
+                method,
+                httpEntity,
+                String::class.java
+            )
+            val curlCommand = getCurlCommandLine(headers, method, body)
 
+            if (responseEntity.statusCode.is2xxSuccessful) {
+                val inputStream = responseEntity.body?.byteInputStream()
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val listOfResults = mutableListOf<LineProcessStatus>()
+
+                reader.useLines { lines ->
+                    lines.forEach { line ->
+                        listOfResults.add(processor.processLine(line))
+                    }
+                }
+                createLogAndSave(
+                    jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
+                    content = responseEntity.body,
+                    message ="Success",
+                    curlCommand = curlCommand,
+                    listOfResults = listOfResults
+                )
+                reader.close()
+            } else {
+                logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")
+                createLogAndSave(
+                    jobProcessStatus = JobProcessStatus.JOB_ERROR,
+                    content = null,
+                    message ="Failure to download file, HTTP STATUS: ${responseEntity.statusCode}",
+                    curlCommand = curlCommand,
+                    listOfResults = null
+                )
+            }
+        } else {
+            logger.info("Job $JOB_NAME, already executed today ${LocalDate.now()} with success.")
+        }
+    }
+
+    fun createLogAndSave(jobProcessStatus: JobProcessStatus, content: String?, message: String, curlCommand: String, listOfResults: List<LineProcessStatus>?) {
+
+        val totalOfLinesSuccess = listOfResults?.filter { it == LineProcessStatus.LINE_PROCESSED }?.size ?: 0
+        val finalMessage = if (!listOfResults.isNullOrEmpty()) {
+            val totalOfLinesProcessed = listOfResults.size
+            val totalOfLinesError = listOfResults.filter { it == LineProcessStatus.LINE_ERROR }.size
+            val totalOfLinesIgnored = listOfResults.filter { it == LineProcessStatus.LINE_IGNORED }.size
+            "$message. Total lines processed: $totalOfLinesProcessed, Total Lines with success: $totalOfLinesSuccess, Total Lines ignored: $totalOfLinesIgnored, Total Lines with error: $totalOfLinesError"
+        } else {
+           message
+        }
+
+        val jobCaptureLog = JobCaptureLog(
+            date = LocalDate.now(),
+            dateTime = LocalDateTime.now(),
+            content = content,
+            curl = curlCommand,
+            status = jobProcessStatus,
+            quantityOfItemsProcessed = totalOfLinesSuccess,
+            jobName = JOB_NAME,
+            message = finalMessage
+        )
+        jobCaptureLogService.save(jobCaptureLog)
+    }
+
+    private fun getCurlCommandLine(headers: HttpHeaders, method: HttpMethod, body: String): String {
+        var curlCommand = "curl -X ${method.name()} $JOB_URL"
+        for ((key, value) in headers) {
+            val temp = value.toString().replace("[", "").replace("]", "")
+            curlCommand += " -H \'$key: $temp\'"
+        }
+        if (body.isNotEmpty()) {
+            curlCommand += " -d '$body'"
+        }
+        return curlCommand
+    }
+
+    private fun createBody(requestData: RequestData) = "form-lista-preco=${requestData.fieldNameValue}&${requestData.fieldButtonValue}=&javax.faces.ViewState=${requestData.fieldViewValue}"
+
+    private fun createHeaders(requestData: RequestData): HttpHeaders {
         val headers = HttpHeaders()
         headers.accept = listOf(
             MediaType.TEXT_HTML,
@@ -46,55 +139,19 @@ class VisaoVipCaptureService @Autowired constructor(
             MediaType.parseMediaType("image/apng"),
             MediaType.ALL
         )
-        headers.set("Accept-Language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7")
-        headers.set("Cache-Control", "max-age=0")
         headers.set("Connection", "keep-alive")
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
         headers.set("Origin", "https://visaovip.com")
         headers.set("Referer", "https://visaovip.com/")
-        headers.set("Sec-Fetch-Dest", "document")
-        headers.set("Sec-Fetch-Mode", "navigate")
-        headers.set("Sec-Fetch-Site", "same-origin")
-        headers.set("Sec-Fetch-User", "?1")
-        headers.set("Upgrade-Insecure-Requests", "1")
-        headers.set(
-            "User-Agent",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        )
-        headers.set("sec-ch-ua", "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"")
-        headers.set("sec-ch-ua-mobile", "?0")
-        headers.set("sec-ch-ua-platform", "\"macOS\"")
         headers.set(
             "Cookie",
             "_fbp=fb.1.1676474393978.1698996418; primefaces.download_index.xhtml=true; _ga_2J4J87E94X=GS1.1.1691776093.15.0.1691776103.50.0.0; _gcl_au=1.1.1040101341.1699293899; _ga=GA1.1.1546199250.1676474392; ${requestData.cookies.get(0)}; ${requestData.cookies.get(1)}; _ga_ET2JLJZ642=GS1.1.1703795403.89.1.1703795404.59.0.0"
         )
-        val body = "form-lista-preco=${requestData.fieldNameValue}&${requestData.fieldButtonValue}=&javax.faces.ViewState=${requestData.fieldViewValue}"
-        val entity = HttpEntity(body, headers)
-        val responseEntity = restTemplate.exchange(
-            URL_VISAOVIP,
-            HttpMethod.POST,
-            entity,
-            String::class.java
-        )
-
-        if (responseEntity.statusCode.is2xxSuccessful) {
-            val inputStream = responseEntity.body?.byteInputStream()
-            val reader = BufferedReader(InputStreamReader(inputStream))
-
-            reader.useLines { lines ->
-                lines.forEach { line ->
-                    processor.processLine(line)
-                }
-            }
-
-            reader.close()
-        } else {
-            logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")
-        }
+        return headers
     }
 
-    private fun captureInfo(): RequestData {
-        val connection = URL(URL_VISAOVIP).openConnection()
+    fun captureInfo(): RequestData {
+        val connection = URL(JOB_URL).openConnection()
         val html = connection.getInputStream().bufferedReader().use { it.readText() }
         val document = Jsoup.parse(html)
 
@@ -132,6 +189,6 @@ class VisaoVipCaptureService @Autowired constructor(
         val fieldNameValue: String,
         val fieldButtonValue: String,
         val cookies: List<String>
-    ) {}
+    )
 
 }

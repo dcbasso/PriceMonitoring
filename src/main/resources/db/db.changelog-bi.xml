@@ -182,6 +182,38 @@
         />
     </changeSet>
 
+    <changeSet id="createJobCaptureLogTable" author="Dante Cesar Basso Filho">
+        <createTable tableName="jobcapturelog">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="curl" type="VARCHAR(6000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_of_items_processed" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 <!-- INSERTS -->
 
     <changeSet id="insertDimensionStore" author="Dante Basso">
