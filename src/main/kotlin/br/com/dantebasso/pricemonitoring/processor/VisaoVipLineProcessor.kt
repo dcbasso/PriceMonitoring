@@ -1,6 +1,7 @@
 package br.com.dantebasso.pricemonitoring.processor
 
 import br.com.dantebasso.pricemonitoring.capture.adapters.PriceHistoryAdapter
+import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 import br.com.dantebasso.pricemonitoring.models.bi.DimensionDate
 import br.com.dantebasso.pricemonitoring.models.bi.DimensionProduct
 import br.com.dantebasso.pricemonitoring.models.bi.DimensionStore
@@ -29,11 +30,10 @@ class VisaoVipLineProcessor @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(VisaoVipLineProcessor::class.java)
 
-
     /**
      *
      */
-    override fun processLine(line: String) {
+    override fun processLine(line: String): LineProcessStatus {
         if (line.matches(REGEX_LINE_VALIDATOR)) {
             val matchResult = REGEX_EXTRACT_DATA.find(line)
             matchResult?.let {
@@ -57,21 +57,27 @@ class VisaoVipLineProcessor @Autowired constructor(
                         try {
                             priceHistoryService.savePriceHistory(priceHistory)
                             logger.info("Saved: ${priceHistory.dimensionDate.id} - ${priceHistory.dimensionProduct.id}")
+                            return LineProcessStatus.LINE_PROCESSED
                         } catch (e: Exception) {
                             logger.error("Error to process product: ${priceHistory.productCode} - ${priceHistory.brand} - ${priceHistory.dimensionProduct.productName}, error: ${e.message}")
+                            return LineProcessStatus.LINE_ERROR
                         }
                     } ?: run {
                         // todo: exception
                         logger.error("Was not possible to locate the Dimension Store, nome: $STORE_NAME")
+                        return LineProcessStatus.LINE_ERROR
                     }
                 } ?: run {
                     //todo: exception
                     logger.error("Was not possible to locate the Dimension Date")
+                    return LineProcessStatus.LINE_ERROR
                 }
             }
         } else {
             logger.error("Line not processed: $line")
+            return LineProcessStatus.LINE_IGNORED
         }
+        return LineProcessStatus.LINE_IGNORED
     }
 
     private fun getDimensionStore(): DimensionStore? {
