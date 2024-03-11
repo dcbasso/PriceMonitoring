@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import org.jsoup.Jsoup
-import java.net.URL
+import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -151,7 +151,7 @@ class VisaoVipCaptureService @Autowired constructor(
     }
 
     fun captureInfo(): RequestData {
-        val connection = URL(JOB_URL).openConnection()
+        val connection = URI(JOB_URL).toURL().openConnection()
         val html = connection.getInputStream().bufferedReader().use { it.readText() }
         val document = Jsoup.parse(html)
 
