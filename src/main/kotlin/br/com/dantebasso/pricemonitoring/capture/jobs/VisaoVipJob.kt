@@ -20,7 +20,7 @@ class VisaoVipJob @Autowired constructor(
     @Scheduled(cron = "\${capture.cron.scheduled}")
     fun execute() {
         logger.info("Executing VisaoVipJob...")
-        visaoVipCaptureService.capture()
+//        visaoVipCaptureService.capture()
         logger.info("Execution VisaoVipJob Done...")
     }
 }

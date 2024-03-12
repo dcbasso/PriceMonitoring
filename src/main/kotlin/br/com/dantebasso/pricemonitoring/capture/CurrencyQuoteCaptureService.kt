@@ -8,6 +8,7 @@ import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
 import br.com.dantebasso.pricemonitoring.service.DimensionCurrencyQuoteService
 import br.com.dantebasso.pricemonitoring.service.DimensionDateService
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
+import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
@@ -28,7 +29,8 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     private val dimensionDateService: DimensionDateService,
     private val dimensionCurrencyQuoteService: DimensionCurrencyQuoteService,
     private val objectMapper: ObjectMapper,
-    private val jobCaptureLogService: JobCaptureLogService
+    private val jobCaptureLogService: JobCaptureLogService,
+    private val emailServiceSender: EmailServiceSender
 ): ICapture {
 
     private val logger = LoggerFactory.getLogger(CurrencyQuoteCaptureService::class.java)
@@ -39,39 +41,40 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     }
 
     override fun capture() {
-        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
-            webClient.get()
-                .uri("$URL$apiKey/latest/USD")
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .map { objectMapper.readTree(it) }
-                .map { it.path("conversion_rates") }
-                .map { createDimensionCurrencyQuote(it, getDimensionDate()) }
-                .doOnError { error ->
-                    logger.error("Error to process currency quotes: ${error.message}")
-                    createLogAndSave(
-                        jobProcessStatus = JobProcessStatus.JOB_ERROR,
-                        content = null,
-                        message = "Failure to download file, HTTP STATUS: ${error.message}",
-                        curlCommand = getCurlCommandLine()
-                    )
-                }
-                .switchIfEmpty(Mono.error(IllegalArgumentException("DimensionDate not found")))
-                .map { dimensionCurrencyQuote ->
-                    dimensionCurrencyQuoteService.saveCurrencyQuote(dimensionCurrencyQuote)
-                }
-                .subscribe {
-                    createLogAndSave(
-                        jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
-                        content = null,
-                        message = "Success",
-                        curlCommand = getCurlCommandLine()
-                    )
-                    logger.info("Currency Quote capture executed with success.\"")
-                }
-        } else {
-            logger.info("Job ${JOB_NAME}, already executed today ${LocalDate.now()} with success.")
-        }
+        emailServiceSender.sendNotificationEmail()
+//        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
+//            webClient.get()
+//                .uri("$URL$apiKey/latest/USD")
+//                .retrieve()
+//                .bodyToMono(String::class.java)
+//                .map { objectMapper.readTree(it) }
+//                .map { it.path("conversion_rates") }
+//                .map { createDimensionCurrencyQuote(it, getDimensionDate()) }
+//                .doOnError { error ->
+//                    logger.error("Error to process currency quotes: ${error.message}")
+//                    createLogAndSave(
+//                        jobProcessStatus = JobProcessStatus.JOB_ERROR,
+//                        content = null,
+//                        message = "Failure to download file, HTTP STATUS: ${error.message}",
+//                        curlCommand = getCurlCommandLine()
+//                    )
+//                }
+//                .switchIfEmpty(Mono.error(IllegalArgumentException("DimensionDate not found")))
+//                .map { dimensionCurrencyQuote ->
+//                    dimensionCurrencyQuoteService.saveCurrencyQuote(dimensionCurrencyQuote)
+//                }
+//                .subscribe {
+//                    createLogAndSave(
+//                        jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
+//                        content = null,
+//                        message = "Success",
+//                        curlCommand = getCurlCommandLine()
+//                    )
+//                    logger.info("Currency Quote capture executed with success.\"")
+//                }
+//        } else {
+//            logger.info("Job ${JOB_NAME}, already executed today ${LocalDate.now()} with success.")
+//        }
     }
 
     private fun createDimensionCurrencyQuote(

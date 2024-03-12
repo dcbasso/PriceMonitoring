@@ -3,7 +3,7 @@ package br.com.dantebasso.pricemonitoring.capture
 import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 import br.com.dantebasso.pricemonitoring.models.control.JobCaptureLog
 import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
-import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
+import br.com.dantebasso.pricemonitoring.capture.processor.VisaoVipLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

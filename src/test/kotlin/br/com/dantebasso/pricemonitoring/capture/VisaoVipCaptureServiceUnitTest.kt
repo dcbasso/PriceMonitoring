@@ -1,6 +1,6 @@
 package br.com.dantebasso.pricemonitoring.capture
 
-import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
+import br.com.dantebasso.pricemonitoring.capture.processor.VisaoVipLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
