@@ -3,8 +3,9 @@ package br.com.dantebasso.pricemonitoring.capture
 import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 import br.com.dantebasso.pricemonitoring.models.control.JobCaptureLog
 import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
-import br.com.dantebasso.pricemonitoring.processor.VisaoVipLineProcessor
+import br.com.dantebasso.pricemonitoring.capture.processor.VisaoVipLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
+import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -23,13 +24,15 @@ import java.time.LocalDateTime
 @Component
 class VisaoVipCaptureService @Autowired constructor(
     private val processor: VisaoVipLineProcessor,
-    private val jobCaptureLogService: JobCaptureLogService
+    private val jobCaptureLogService: JobCaptureLogService,
+    private val emailServiceSender: EmailServiceSender
 ): ICapture {
 
     private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
     companion object {
-        private val JOB_NAME = "VisaoVipCaptureService"
+        private const val JOB_NAME = "VisaoVipCaptureService"
+        private const val JOB_NAME_DESCRIPTION = "Visão Vip Capture Service"
         private const val JOB_URL = "https://www.visaovip.com"
 
         private const val XPATH_FIELD_VIEW_STATE_ELEMENT = "//*[@id=\"j_id1:javax.faces.ViewState:2\"]"
@@ -73,6 +76,7 @@ class VisaoVipCaptureService @Autowired constructor(
                     curlCommand = curlCommand,
                     listOfResults = listOfResults
                 )
+                emailServiceSender.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(JOB_NAME_DESCRIPTION)
                 reader.close()
             } else {
                 logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")

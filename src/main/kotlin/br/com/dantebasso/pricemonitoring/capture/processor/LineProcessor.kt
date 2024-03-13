@@ -1,4 +1,4 @@
-package br.com.dantebasso.pricemonitoring.processor
+package br.com.dantebasso.pricemonitoring.capture.processor
 
 import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 

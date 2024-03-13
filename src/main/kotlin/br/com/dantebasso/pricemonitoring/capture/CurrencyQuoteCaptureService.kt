@@ -8,6 +8,7 @@ import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
 import br.com.dantebasso.pricemonitoring.service.DimensionCurrencyQuoteService
 import br.com.dantebasso.pricemonitoring.service.DimensionDateService
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
+import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
@@ -28,14 +29,16 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     private val dimensionDateService: DimensionDateService,
     private val dimensionCurrencyQuoteService: DimensionCurrencyQuoteService,
     private val objectMapper: ObjectMapper,
-    private val jobCaptureLogService: JobCaptureLogService
+    private val jobCaptureLogService: JobCaptureLogService,
+    private val emailServiceSender: EmailServiceSender
 ): ICapture {
 
     private val logger = LoggerFactory.getLogger(CurrencyQuoteCaptureService::class.java)
 
     companion object {
-        private val JOB_NAME = "CurrencyQuoteCaptureService"
-        private val URL = "https://v6.exchangerate-api.com/v6/"
+        private const val JOB_NAME = "CurrencyQuoteCaptureService"
+        private const val JOB_NAME_DESCRIPTION = "Currency Quote Capture Service"
+        private const val URL = "https://v6.exchangerate-api.com/v6/"
     }
 
     override fun capture() {
@@ -67,6 +70,7 @@ class CurrencyQuoteCaptureService @Autowired constructor(
                         message = "Success",
                         curlCommand = getCurlCommandLine()
                     )
+                    emailServiceSender.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(JOB_NAME_DESCRIPTION)
                     logger.info("Currency Quote capture executed with success.\"")
                 }
         } else {
