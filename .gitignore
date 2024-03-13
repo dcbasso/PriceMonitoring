@@ -34,8 +34,8 @@ gradle/
 
 # Arquivos de saída
 out/
-#build.gradle
-#build.gradle.kts
+build.gradle
+build.gradle.kts
 
 # Diretório de artefatos do IntelliJ
 *.iml

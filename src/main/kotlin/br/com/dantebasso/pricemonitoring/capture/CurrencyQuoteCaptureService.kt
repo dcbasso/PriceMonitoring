@@ -36,45 +36,46 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     private val logger = LoggerFactory.getLogger(CurrencyQuoteCaptureService::class.java)
 
     companion object {
-        private val JOB_NAME = "CurrencyQuoteCaptureService"
-        private val URL = "https://v6.exchangerate-api.com/v6/"
+        private const val JOB_NAME = "CurrencyQuoteCaptureService"
+        private const val JOB_NAME_DESCRIPTION = "Currency Quote Capture Service"
+        private const val URL = "https://v6.exchangerate-api.com/v6/"
     }
 
     override fun capture() {
-        emailServiceSender.sendNotificationEmail()
-//        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
-//            webClient.get()
-//                .uri("$URL$apiKey/latest/USD")
-//                .retrieve()
-//                .bodyToMono(String::class.java)
-//                .map { objectMapper.readTree(it) }
-//                .map { it.path("conversion_rates") }
-//                .map { createDimensionCurrencyQuote(it, getDimensionDate()) }
-//                .doOnError { error ->
-//                    logger.error("Error to process currency quotes: ${error.message}")
-//                    createLogAndSave(
-//                        jobProcessStatus = JobProcessStatus.JOB_ERROR,
-//                        content = null,
-//                        message = "Failure to download file, HTTP STATUS: ${error.message}",
-//                        curlCommand = getCurlCommandLine()
-//                    )
-//                }
-//                .switchIfEmpty(Mono.error(IllegalArgumentException("DimensionDate not found")))
-//                .map { dimensionCurrencyQuote ->
-//                    dimensionCurrencyQuoteService.saveCurrencyQuote(dimensionCurrencyQuote)
-//                }
-//                .subscribe {
-//                    createLogAndSave(
-//                        jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
-//                        content = null,
-//                        message = "Success",
-//                        curlCommand = getCurlCommandLine()
-//                    )
-//                    logger.info("Currency Quote capture executed with success.\"")
-//                }
-//        } else {
-//            logger.info("Job ${JOB_NAME}, already executed today ${LocalDate.now()} with success.")
-//        }
+        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
+            webClient.get()
+                .uri("$URL$apiKey/latest/USD")
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .map { objectMapper.readTree(it) }
+                .map { it.path("conversion_rates") }
+                .map { createDimensionCurrencyQuote(it, getDimensionDate()) }
+                .doOnError { error ->
+                    logger.error("Error to process currency quotes: ${error.message}")
+                    createLogAndSave(
+                        jobProcessStatus = JobProcessStatus.JOB_ERROR,
+                        content = null,
+                        message = "Failure to download file, HTTP STATUS: ${error.message}",
+                        curlCommand = getCurlCommandLine()
+                    )
+                }
+                .switchIfEmpty(Mono.error(IllegalArgumentException("DimensionDate not found")))
+                .map { dimensionCurrencyQuote ->
+                    dimensionCurrencyQuoteService.saveCurrencyQuote(dimensionCurrencyQuote)
+                }
+                .subscribe {
+                    createLogAndSave(
+                        jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
+                        content = null,
+                        message = "Success",
+                        curlCommand = getCurlCommandLine()
+                    )
+                    emailServiceSender.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(JOB_NAME_DESCRIPTION)
+                    logger.info("Currency Quote capture executed with success.\"")
+                }
+        } else {
+            logger.info("Job ${JOB_NAME}, already executed today ${LocalDate.now()} with success.")
+        }
     }
 
     private fun createDimensionCurrencyQuote(
