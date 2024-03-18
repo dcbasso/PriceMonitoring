@@ -7,4 +7,6 @@ interface ICapture {
 
     fun capture()
 
+    fun getJobName(): String
+
 }

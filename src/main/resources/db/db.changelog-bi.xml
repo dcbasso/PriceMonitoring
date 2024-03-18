@@ -183,7 +183,7 @@
     </changeSet>
 
     <changeSet id="createJobCaptureLogTable" author="Dante Cesar Basso Filho">
-        <createTable tableName="jobcapturelog">
+        <createTable tableName="job_capture_log">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -385,6 +385,13 @@
             END LOOP;
         END $$;
         ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="insertDimensionStoreTopdek" author="Dante Basso">
+        <sql>
+            INSERT INTO dimension_store (id, name)
+            VALUES (gen_random_uuid(), 'Topdek');
         </sql>
     </changeSet>
 

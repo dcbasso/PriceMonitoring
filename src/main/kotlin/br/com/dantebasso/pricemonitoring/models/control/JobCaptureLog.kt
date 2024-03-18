@@ -11,7 +11,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "jobcapturelog")
+@Table(name = "job_capture_log")
 data class JobCaptureLog(
     @Column(nullable = false, unique = true)
     val date: LocalDate,

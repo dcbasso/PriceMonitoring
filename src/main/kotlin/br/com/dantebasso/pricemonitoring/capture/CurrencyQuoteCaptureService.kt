@@ -36,7 +36,7 @@ class CurrencyQuoteCaptureService @Autowired constructor(
     private val logger = LoggerFactory.getLogger(CurrencyQuoteCaptureService::class.java)
 
     companion object {
-        private const val JOB_NAME = "CurrencyQuoteCaptureService"
+        const val JOB_NAME = "CurrencyQuote"
         private const val JOB_NAME_DESCRIPTION = "Currency Quote Capture Service"
         private const val URL = "https://v6.exchangerate-api.com/v6/"
     }
@@ -77,6 +77,8 @@ class CurrencyQuoteCaptureService @Autowired constructor(
             logger.info("Job ${JOB_NAME}, already executed today ${LocalDate.now()} with success.")
         }
     }
+
+    override fun getJobName() = JOB_NAME
 
     private fun createDimensionCurrencyQuote(
         ratesNode: JsonNode,
