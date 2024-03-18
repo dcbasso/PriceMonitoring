@@ -26,7 +26,7 @@ ENV notification.email.enabled=true
 ENV notification.email.destiny=${YOUR_EMAIL_DESTINY}
 ENV notification.email.identification=${YOUR_EMAIL_IDENTIFICATION}
 ENV jobs.enabled=true
-ENV jobs.stores.list="visaovip, topdek"
+ENV jobs.stores.list=visaovip, topdek
 ENV jobs.extras.list="currencyquote"
 
 COPY ../build/libs/pricemonitoring.jar /app/pricemonitoring.jar
