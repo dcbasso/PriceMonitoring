@@ -1,7 +1,8 @@
 package br.com.dantebasso.pricemonitoring.capture.jobs
 
-import br.com.dantebasso.pricemonitoring.capture.CurrencyQuoteCaptureService
 import br.com.dantebasso.pricemonitoring.capture.ICapture
+import br.com.dantebasso.pricemonitoring.capture.TopdekCaptureService
+import br.com.dantebasso.pricemonitoring.capture.VisaoVipCaptureService
 import br.com.dantebasso.pricemonitoring.capture.config.JobConfig
 import org.quartz.DisallowConcurrentExecution
 import org.slf4j.LoggerFactory
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Component
 
 @Component
 @DisallowConcurrentExecution
-class CurrencyQuoteJob @Autowired constructor(
-    private val currencyQuoteCaptureService: CurrencyQuoteCaptureService,
+class CaptureStoreJobs @Autowired constructor(
+    private val visaoVipCaptureService: VisaoVipCaptureService,
+    private val topdekCaptureService: TopdekCaptureService,
     private val jobConfig: JobConfig
 ) {
 
-    private val logger = LoggerFactory.getLogger(CurrencyQuoteJob::class.java)
+    private val logger = LoggerFactory.getLogger(CaptureStoreJobs::class.java)
 
     @Scheduled(cron = "\${capture.cron.scheduled}")
     fun execute() {
@@ -24,12 +26,12 @@ class CurrencyQuoteJob @Autowired constructor(
             logger.info("Jobs are disabled. Skipping execution...")
             return
         }
-
         val map = HashMap<String, ICapture>()
-        map[CurrencyQuoteCaptureService.JOB_NAME.lowercase()] = currencyQuoteCaptureService
+        map[VisaoVipCaptureService.JOB_NAME.lowercase()] = visaoVipCaptureService
+        map[TopdekCaptureService.JOB_NAME.lowercase()] = topdekCaptureService
 
-        jobConfig.jobExtrasList.forEach {
-            if (jobConfig.isExtraJobEnabled(it)) {
+        jobConfig.jobStoresList.forEach {
+            if (jobConfig.isStoreJobEnabled(it)) {
                 val job = map[it.lowercase()]
                 if (job != null) {
                     logger.info("Executing $it...")
