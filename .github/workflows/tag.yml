@@ -1,4 +1,4 @@
-name: Build and Deploy Docker (Docker Hub)
+name: Tag Workflow (Build and deploy to Docker Hub)
 
 on:
   push:

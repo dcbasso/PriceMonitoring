@@ -1,9 +1,9 @@
-name: Build and Deploy Docker (Docker Hub)
+name: Pull Request Workflow (Build and check for failures)
 
 on:
   push:
     branches:
-      - main  # ajuste conforme a branch que deseja monitorar para as alterações
+      - main
   pull_request:
     types: [opened, synchronize]
 
