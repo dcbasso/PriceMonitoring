@@ -15,7 +15,7 @@ class JobCaptureLogService @Autowired constructor(private val jobCaptureLogRepos
     }
 
     fun jobWasExecutedTodayAndWithSuccess(date: LocalDate, jobName: String): Boolean {
-        return jobCaptureLogRepository.findByDateAndJobName(date, jobName)?.status == JobProcessStatus.JOB_SUCCESS
+        return jobCaptureLogRepository.findByDateAndJobNameAndStatus(date, jobName, JobProcessStatus.JOB_SUCCESS) != null
     }
 
     fun jobWasExecutedTodayAndWithSuccess(jobName: String): Boolean {
