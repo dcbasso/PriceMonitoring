@@ -25,7 +25,7 @@ class VisaoVipLineProcessor @Autowired constructor(
     companion object {
         private val REGEX_LINE_VALIDATOR = Regex("^\\|\\s*\\d+\\s*\\|\\s*[^|]+\\|\\s*US\\$\\s*[\\d,.]+\\s*$")
         private val REGEX_EXTRACT_DATA = Regex("^\\|\\s*(\\d+)\\s*\\|\\s*([^|]+)\\|\\s*(US\\$\\s*[\\d,.]+)\\s*$")
-        private val STORE_NAME = "Visão Vip"
+        const val STORE_NAME = "VisãoVip"
     }
 
     private val logger = LoggerFactory.getLogger(VisaoVipLineProcessor::class.java)
