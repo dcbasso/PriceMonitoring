@@ -25,7 +25,7 @@ class TopdekLineProcessor @Autowired constructor(
     companion object {
         private val REGEX_LINE_VALIDATOR = Regex("^\\d+\\s+[A-Z].*?\\d+\\.\\d{2}\\s*\$")
         private val REGEX_EXTRACT_DATA = Regex("^(\\d+)\\s+(.+?)\\s+(\\d+\\.\\d{2})\\s*$")
-        private val STORE_NAME = "Topdek"
+        const val STORE_NAME = "Topdek"
     }
 
     private val logger = LoggerFactory.getLogger(TopdekLineProcessor::class.java)

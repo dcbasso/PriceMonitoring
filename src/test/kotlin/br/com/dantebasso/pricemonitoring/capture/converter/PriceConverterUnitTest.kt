@@ -31,7 +31,7 @@ class PriceConverterUnitTest {
         )
     }
 
-    @ParameterizedTest(name = "given price {0}, currency {1}")
+    @ParameterizedTest(name = "given store: {0} the price format {1} should be converted to {2}")
     @MethodSource("prices")
     fun validatePriceConverter(store: String, price: String, expected: PriceDate) {
         val result = PriceConverter.convert(price)
