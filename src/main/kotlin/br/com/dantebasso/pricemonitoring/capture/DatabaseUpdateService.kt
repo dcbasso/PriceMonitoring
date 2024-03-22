@@ -32,12 +32,9 @@ class DatabaseUpdateService @Autowired constructor(
     override fun execute() {
         if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
             val products = dimensionProductRepository.findByBrandId(DimensionBrandRepository.ID_OUTRA_MARCA)
-            val countProductsUpdated = BigDecimal.ZERO
-            products.forEach {
+            val countProductsUpdated = products.count {
                 logger.info("Updating brand of product: ${it.productName}")
-                if (dimensionProductService.updateProductBrand(it).brand.id != DimensionBrandRepository.ID_OUTRA_MARCA) {
-                    countProductsUpdated.add(BigDecimal.ONE)
-                }
+                dimensionProductService.updateProductBrand(it).brand.id != DimensionBrandRepository.ID_OUTRA_MARCA
             }
             val message = "Database Update Job executed successfully. Processed ${products.size} and updated $countProductsUpdated products."
             logger.info(message)
