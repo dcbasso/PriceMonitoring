@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.util.*
 
 @Entity
 @Table(name = "dimension_date")
@@ -32,5 +33,7 @@ data class DimensionDate(
     val monthYear: String,
 
     @Column(nullable = false, name = "full_date")
-    val fullDate: String
+    val fullDate: String,
+
+    override var id: UUID? = null
 ): BaseModel()

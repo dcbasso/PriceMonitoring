@@ -70,7 +70,7 @@ class CurrencyQuoteCaptureService @Autowired constructor(
                         message = "Success",
                         curlCommand = getCurlCommandLine()
                     )
-                    emailServiceSender.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(JOB_NAME_DESCRIPTION)
+                    emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME_DESCRIPTION)
                     logger.info("Currency Quote capture executed with success.\"")
                 }
         } else {

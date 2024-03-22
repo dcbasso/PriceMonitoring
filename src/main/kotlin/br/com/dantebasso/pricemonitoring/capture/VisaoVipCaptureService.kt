@@ -76,7 +76,7 @@ class VisaoVipCaptureService @Autowired constructor(
                     curlCommand = curlCommand,
                     listOfResults = listOfResults
                 )
-                emailServiceSender.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(JOB_NAME_DESCRIPTION)
+                emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME_DESCRIPTION)
                 reader.close()
             } else {
                 logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")

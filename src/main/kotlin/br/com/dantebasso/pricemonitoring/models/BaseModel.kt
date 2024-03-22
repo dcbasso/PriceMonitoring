@@ -7,9 +7,11 @@ import org.hibernate.annotations.GenericGenerator
 import java.util.UUID
 
 @MappedSuperclass
-abstract class BaseModel(
+abstract class BaseModel: Identifiable {
+
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
-    var id: UUID? = null
-)
+    override var id: UUID? = null
+
+}

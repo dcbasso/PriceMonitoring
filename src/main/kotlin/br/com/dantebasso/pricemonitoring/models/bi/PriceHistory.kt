@@ -1,5 +1,6 @@
 package br.com.dantebasso.pricemonitoring.models.bi
 
+import br.com.dantebasso.pricemonitoring.models.BaseModel
 import java.time.LocalDateTime
 import java.util.UUID
 import jakarta.persistence.*
@@ -10,10 +11,6 @@ import java.math.BigDecimal
     uniqueConstraints = [UniqueConstraint(columnNames = ["product_id", "date_id"], name = "uk_price_history_product_date")]
 )
 data class PriceHistory(
-    @Id
-    @GeneratedValue
-    val id: UUID? = null,
-
     val productCode: String,
 
     val brand: String,
@@ -37,7 +34,9 @@ data class PriceHistory(
     val currency: String,
 
     @Column(name = "effective_date", nullable = false)
-    val effectiveDate: LocalDateTime
-)
+    val effectiveDate: LocalDateTime,
+
+    override var id: UUID? = null
+): BaseModel()
 
 
