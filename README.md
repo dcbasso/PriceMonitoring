@@ -43,7 +43,7 @@ docker push dcbasso/price-monitoring:latest
 |-----------------------------------------------|---------------------------------------------------------|
 | **DATASOURCE/JPA**                            |                                                         |
 |                                               |                                                         |
-| spring.datasource.url                        | jdbc:postgresql://localhost:5432/pricemonitoring_test_31 |
+| spring.datasource.url                        | jdbc:postgresql://localhost:5432/pricemonitoring_test |
 | spring.datasource.username                   | postgres                                                |
 | spring.datasource.password                   | pricemonitoring                                         |
 | spring.jpa.show-sql                          | false                                                   |
