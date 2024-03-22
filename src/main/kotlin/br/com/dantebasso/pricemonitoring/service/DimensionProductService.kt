@@ -24,6 +24,10 @@ class DimensionProductService @Autowired constructor(
         return productRepository.saveAndFlush(dimensionProduct)
     }
 
+    fun updateProductBrand(product: DimensionProduct): DimensionProduct {
+        return productRepository.save(dimensionProductAdapter.adaptNewBrand(product))
+    }
+
     /**
      * create entity and save
      */

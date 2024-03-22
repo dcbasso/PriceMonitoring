@@ -4,6 +4,7 @@ import br.com.dantebasso.pricemonitoring.models.BaseModel
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import java.util.UUID
 
 @Entity
 data class DimensionProduct(
@@ -18,6 +19,8 @@ data class DimensionProduct(
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     val brand: DimensionBrand,
+
+    override var id: UUID? = null
 ): BaseModel()
 
 

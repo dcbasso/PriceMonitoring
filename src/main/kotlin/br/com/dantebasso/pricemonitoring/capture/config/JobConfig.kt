@@ -17,6 +17,9 @@ class JobConfig {
     @Value("\${jobs.extras.list}")
     lateinit var jobExtrasList: List<String>
 
+    @Value("\${jobs.database-update.enabled}")
+    var databaseUpdateEnabled: Boolean = false
+
     fun isStoreJobEnabled(jobName: String): Boolean {
         return jobStoresList.any { it.equals(jobName, ignoreCase = true) }
     }
