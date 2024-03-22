@@ -39,7 +39,6 @@ docker push dcbasso/price-monitoring:latest
 
 - To run the project, you need to set the following environment variables:
 
-
 | Atributo                                      | Valor Padrão                                            |
 |-----------------------------------------------|---------------------------------------------------------|
 | **DATASOURCE/JPA**                            |                                                         |
