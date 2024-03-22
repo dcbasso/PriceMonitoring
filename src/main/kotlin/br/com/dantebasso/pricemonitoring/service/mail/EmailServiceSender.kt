@@ -53,7 +53,7 @@ class EmailServiceSender @Autowired constructor(
         }
     }
 
-    fun sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(jobName: String) {
+    fun sendNotificationOfFinishedTheJobProcessWithSuccess(jobName: String) {
         val localDateTime = LocalDateTime.now()
         val formatterTime = DateTimeFormatter.ofPattern(TIME_FORMAT)
         val formatterDate = DateTimeFormatter.ofPattern(DATE_FORMAT, Locale.forLanguageTag(LANGUAGE))
@@ -67,5 +67,19 @@ class EmailServiceSender @Autowired constructor(
         sendEmail(subject, text)
     }
 
+    fun sendNotificationOfFinishedTheJobProcessWithSuccess(jobName: String, message: String) {
+        val localDateTime = LocalDateTime.now()
+        val formatterTime = DateTimeFormatter.ofPattern(TIME_FORMAT)
+        val formatterDate = DateTimeFormatter.ofPattern(DATE_FORMAT, Locale.forLanguageTag(LANGUAGE))
+        val formatterDayWeek = DateTimeFormatter.ofPattern(DAY_WEEK_FORMAT, Locale.forLanguageTag(LANGUAGE))
+        val subject = "Successful Processed ($jobName | ${localDateTime.format(formatterDayWeek)})"
+        val text = "Job: $jobName" +
+                "\nIdentification: $emailIdentification" +
+                "\nDate: ${localDateTime.format(formatterDate)}" +
+                "\nDay: ${localDateTime.format(formatterDayWeek)}" +
+                "\nTime: ${localDateTime.format(formatterTime)}" +
+                "\nMessage: $message"
+        sendEmail(subject, text)
+    }
 
 }

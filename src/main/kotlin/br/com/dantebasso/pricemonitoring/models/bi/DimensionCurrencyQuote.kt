@@ -3,6 +3,7 @@ package br.com.dantebasso.pricemonitoring.models.bi
 import br.com.dantebasso.pricemonitoring.models.BaseModel
 import jakarta.persistence.*
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity
 @Table(name = "dimension_currency_quote")
@@ -39,6 +40,8 @@ data class DimensionCurrencyQuote(
     val dimensionDate: DimensionDate,
 
     @Column(name = "effective_date", nullable = false)
-    val effectiveDate: LocalDateTime
+    val effectiveDate: LocalDateTime,
+
+    override var id: UUID? = null
 ): BaseModel()
 

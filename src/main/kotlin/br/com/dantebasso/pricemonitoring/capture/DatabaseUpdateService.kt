@@ -6,6 +6,7 @@ import br.com.dantebasso.pricemonitoring.repository.DimensionBrandRepository
 import br.com.dantebasso.pricemonitoring.repository.DimensionProductRepository
 import br.com.dantebasso.pricemonitoring.service.DimensionProductService
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
+import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,7 +18,8 @@ import java.time.LocalDateTime
 class DatabaseUpdateService @Autowired constructor(
     private val jobCaptureLogService: JobCaptureLogService,
     private val dimensionProductRepository: DimensionProductRepository,
-    private val dimensionProductService: DimensionProductService
+    private val dimensionProductService: DimensionProductService,
+    private val emailServiceSender: EmailServiceSender
 ): IJob {
 
     private val logger = LoggerFactory.getLogger(DatabaseUpdateService::class.java)
@@ -37,7 +39,8 @@ class DatabaseUpdateService @Autowired constructor(
                     countProductsUpdated.add(BigDecimal.ONE)
                 }
             }
-            logger.info("Database Update Job executed successfully. Processed ${products.size} and updated $countProductsUpdated products.")
+            val message = "Database Update Job executed successfully. Processed ${products.size} and updated $countProductsUpdated products."
+            logger.info(message)
             jobCaptureLogService.save(
                 JobCaptureLog(
                     date = LocalDate.now(),
@@ -47,9 +50,10 @@ class DatabaseUpdateService @Autowired constructor(
                     status = JobProcessStatus.JOB_SUCCESS,
                     quantityOfItemsProcessed = products.size,
                     jobName = JOB_NAME,
-                    message = "Database Update Job executed successfully. Processed ${products.size} and updated $countProductsUpdated products."
+                    message = message
                 )
             )
+            emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME, message)
         } else {
             logger.info("Database Update Job already executed today. Skipping execution...")
         }

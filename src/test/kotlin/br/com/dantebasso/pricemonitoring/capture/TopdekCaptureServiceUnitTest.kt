@@ -31,7 +31,7 @@ class TopdekCaptureServiceUnitTest {
         toTest.capture()
         verify(atLeast = 1) { processorMockk.processLine(any()) }
         verify(exactly = 1) { jobCaptureLogServiceMockk.save(any()) }
-        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationEmailWhenSuccessfullyFinishedTheJobProcess(any()) }
+        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any()) }
     }
 
 }
