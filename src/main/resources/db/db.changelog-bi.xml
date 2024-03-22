@@ -286,6 +286,7 @@
             (gen_random_uuid(), 'Haylou'),
             (gen_random_uuid(), 'Hubble Connected'),
             (gen_random_uuid(), 'Hetzer'),
+            (gen_random_uuid(), 'Hikvision'),
             (gen_random_uuid(), 'Honeywell'),
             (gen_random_uuid(), 'HTV'),
             (gen_random_uuid(), 'Huawei'),
