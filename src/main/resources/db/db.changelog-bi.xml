@@ -537,10 +537,6 @@
         </sql>
     </changeSet>
 
-    <changeSet id="removeDuplicateItems22042024" author="Dante Basso">
-        <sql>DELETE FROM dimension_brand WHERE name IN ('Multilaser', 'Mitsuo', 'Honeywell', 'Hikvision');</sql>
-    </changeSet>
-
     <changeSet id="addUniqueConstraintOnNameColumn" author="Dante Basso">
         <addUniqueConstraint tableName="dimension_brand" columnNames="name" constraintName="unique_brand_name"/>
     </changeSet>
