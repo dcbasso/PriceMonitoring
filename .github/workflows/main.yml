@@ -3,7 +3,7 @@ name: Main Workflow (Merge to master with Docker Hub Deploy)
 on:
   push:
     branches:
-      - main  # ajuste conforme a branch que deseja monitorar para as alterações
+      - main
 
 jobs:
   build:
