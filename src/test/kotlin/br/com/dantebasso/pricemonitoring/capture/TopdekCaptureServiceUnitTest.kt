@@ -3,6 +3,7 @@ package br.com.dantebasso.pricemonitoring.capture
 import br.com.dantebasso.pricemonitoring.capture.processor.TopdekLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
@@ -31,7 +32,8 @@ class TopdekCaptureServiceUnitTest {
         toTest.capture()
         verify(atLeast = 1) { processorMockk.processLine(any()) }
         verify(exactly = 1) { jobCaptureLogServiceMockk.save(any()) }
-        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any()) }
+        verify(exactly = 0) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any()) }
+        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any(), any()) }
     }
 
 }

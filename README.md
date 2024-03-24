@@ -39,54 +39,54 @@ docker push dcbasso/price-monitoring:latest
 
 - To run the project, you need to set the following environment variables:
 
-| Atributo                                      | Valor Padrão                                            |
-|-----------------------------------------------|---------------------------------------------------------|
-| **DATASOURCE/JPA**                            |                                                         |
-|                                               |                                                         |
+| Atributo                                      | Valor Padrão                                          |
+|-----------------------------------------------|-------------------------------------------------------|
+| **DATASOURCE/JPA**                            |                                                       |
+|                                               |                                                       |
 | spring.datasource.url                        | jdbc:postgresql://localhost:5432/pricemonitoring_test |
-| spring.datasource.username                   | postgres                                                |
-| spring.datasource.password                   | pricemonitoring                                         |
-| spring.jpa.show-sql                          | false                                                   |
-| spring.jpa.hibernate.ddl-auto                | update                                                  |
-|                                               |                                                         |
-| **LIQUIBASE**                                 |                                                         |
-|                                               |                                                         |
-| spring.liquibase.change-log                  | classpath:db/liquibase-changelog.xml                    |
-| spring.liquibase.enabled                     | true                                                    |
-|                                               |                                                         |
-| **EXCHANGERATE-API (https://app.exchangerate-api.com/)** |                                                         |
-|                                               |                                                         |
-| exchangeratesapi.api-key                     | ${YOUR_KEY}                                             |
-|                                               |                                                         |
-| **SCHEDULED**                                 |                                                         |
-|                                               |                                                         |
-| capture.cron.scheduled                       | 0 0 8-17 * * *                                          |
-|                                               |                                                         |
-| **EMAIL SERVICE**                             |                                                         |
-|                                               |                                                         |
-| spring.mail.properties.debug                 | false                                                   |
-| spring.mail.host                             | smtp.dreamhost.com                                      |
-| spring.mail.port                             | 465                                                     |
-| spring.mail.username                         | ${YOUR_EMAIL}                                           |
-| spring.mail.password                         | ${YOUR_PASSWORD}                                        |
-| spring.mail.properties.transport.protocol   | smtp                                                    |
-| spring.mail.properties.mail.smtp.username   | ${YOUR_EMAIL}                                           |
-| spring.mail.properties.mail.smtp.auth       | true                                                    |
-| spring.mail.properties.mail.smtp.starttls.enable | true                                                    |
-| spring.mail.properties.mail.smtp.starttls.required | true                                                    |
-| spring.mail.properties.mail.smtp.ssl.enable | true                                                    |
-| spring.mail.properties.mail.smtp.connectiontimeout | 5000                                                    |
-| spring.mail.properties.mail.smtp.timeout   | 5000                                                    |
-| spring.mail.properties.mail.smtp.writetimeout | 5000                                                    |
-| spring.mail.properties.mail.smtp.from      | ${YOUR_EMAIL}                                           |
-| spring.mail.test-connection                  | true                                                    |
-| notification.email.enabled                   | false                                                   |
-| notification.email.destiny                   | ${YOUR_EMAIL_DESTINY}                                   |
-| notification.email.identification            | ${TEXT_FOR_ENV_IDENTIFICATION}                          |
-|                                               |                                                         |
-| **JOBS**                                      |                                                         |
-|                                               |                                                         |
-| jobs.enabled                                 | true                                                    |
-| jobs.stores.list                             | visaovip, topdek                                        |
-| jobs.extras.list                             | currencyquote                                           |
-| jobs.database-update.enabled                 | true                                                    |
+| spring.datasource.username                   | postgres                                              |
+| spring.datasource.password                   | pricemonitoring                                       |
+| spring.jpa.show-sql                          | false                                                 |
+| spring.jpa.hibernate.ddl-auto                | update                                                |
+|                                               |                                                       |
+| **LIQUIBASE**                                 |                                                       |
+|                                               |                                                       |
+| spring.liquibase.change-log                  | classpath:db/liquibase-changelog.xml                  |
+| spring.liquibase.enabled                     | true                                                  |
+|                                               |                                                       |
+| **EXCHANGERATE-API (https://app.exchangerate-api.com/)** |                                                       |
+|                                               |                                                       |
+| exchangeratesapi.api-key                     | ${YOUR_KEY}                                           |
+|                                               |                                                       |
+| **SCHEDULED**                                 |                                                       |
+|                                               |                                                       |
+| capture.cron.scheduled                       | 0 0 8-17 * * *                                        |
+|                                               |                                                       |
+| **EMAIL SERVICE**                             |                                                       |
+|                                               |                                                       |
+| spring.mail.properties.debug                 | false                                                 |
+| spring.mail.host                             | smtp.dreamhost.com                                    |
+| spring.mail.port                             | 465                                                   |
+| spring.mail.username                         | ${YOUR_EMAIL}                                         |
+| spring.mail.password                         | ${YOUR_PASSWORD}                                      |
+| spring.mail.properties.transport.protocol   | smtp                                                  |
+| spring.mail.properties.mail.smtp.username   | ${YOUR_EMAIL}                                         |
+| spring.mail.properties.mail.smtp.auth       | true                                                  |
+| spring.mail.properties.mail.smtp.starttls.enable | true                                                  |
+| spring.mail.properties.mail.smtp.starttls.required | true                                                  |
+| spring.mail.properties.mail.smtp.ssl.enable | true                                                  |
+| spring.mail.properties.mail.smtp.connectiontimeout | 5000                                                  |
+| spring.mail.properties.mail.smtp.timeout   | 5000                                                  |
+| spring.mail.properties.mail.smtp.writetimeout | 5000                                                  |
+| spring.mail.properties.mail.smtp.from      | ${YOUR_EMAIL}                                         |
+| spring.mail.test-connection                  | true                                                  |
+| notification.email.enabled                   | false                                                 |
+| notification.email.destiny                   | ${YOUR_EMAIL_DESTINY}                                 |
+| notification.email.identification            | ${TEXT_FOR_ENV_IDENTIFICATION}                        |
+|                                               |                                                       |
+| **JOBS**                                      |                                                       |
+|                                               |                                                       |
+| jobs.enabled                                 | true                                                  |
+| jobs.stores.list                             | visãovip, topdek                                      |
+| jobs.extras.list                             | currencyquote                                         |
+| jobs.database-update.enabled                 | true                                                  |

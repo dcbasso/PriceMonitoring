@@ -31,7 +31,7 @@ class VisaoVipCaptureService @Autowired constructor(
     private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
     companion object {
-        const val JOB_NAME = "VisaoVip"
+        const val JOB_NAME = "VisãoVip"
         private const val JOB_NAME_DESCRIPTION = "Visão Vip Capture Service"
         private const val JOB_URL = "https://www.visaovip.com"
 
@@ -69,18 +69,17 @@ class VisaoVipCaptureService @Autowired constructor(
                         listOfResults.add(processor.processLine(line))
                     }
                 }
-                createLogAndSave(
+                createLogAndSendEmail(
                     jobProcessStatus = JobProcessStatus.JOB_SUCCESS,
                     content = responseEntity.body,
                     message ="Success",
                     curlCommand = curlCommand,
                     listOfResults = listOfResults
                 )
-                emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME_DESCRIPTION)
                 reader.close()
             } else {
                 logger.error("Failure to download file, HTTP STATUS: ${responseEntity.statusCode}")
-                createLogAndSave(
+                createLogAndSendEmail(
                     jobProcessStatus = JobProcessStatus.JOB_ERROR,
                     content = null,
                     message ="Failure to download file, HTTP STATUS: ${responseEntity.statusCode}",
@@ -93,8 +92,7 @@ class VisaoVipCaptureService @Autowired constructor(
         }
     }
 
-    fun createLogAndSave(jobProcessStatus: JobProcessStatus, content: String?, message: String, curlCommand: String, listOfResults: List<LineProcessStatus>?) {
-
+    fun createLogAndSendEmail(jobProcessStatus: JobProcessStatus, content: String?, message: String, curlCommand: String, listOfResults: List<LineProcessStatus>?) {
         val totalOfLinesSuccess = listOfResults?.filter { it == LineProcessStatus.LINE_PROCESSED }?.size ?: 0
         val finalMessage = if (!listOfResults.isNullOrEmpty()) {
             val totalOfLinesProcessed = listOfResults.size
@@ -116,6 +114,9 @@ class VisaoVipCaptureService @Autowired constructor(
             message = finalMessage
         )
         jobCaptureLogService.save(jobCaptureLog)
+        if (jobProcessStatus == JobProcessStatus.JOB_SUCCESS) {
+            emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME, finalMessage)
+        }
     }
 
     private fun getCurlCommandLine(headers: HttpHeaders, method: HttpMethod, body: String): String {
