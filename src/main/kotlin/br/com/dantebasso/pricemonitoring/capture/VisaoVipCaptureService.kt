@@ -31,7 +31,7 @@ class VisaoVipCaptureService @Autowired constructor(
     private val logger = LoggerFactory.getLogger(VisaoVipCaptureService::class.java)
 
     companion object {
-        const val JOB_NAME = "Visão Vip"
+        const val JOB_NAME = "VisãoVip"
         private const val JOB_NAME_DESCRIPTION = "Visão Vip Capture Service"
         private const val JOB_URL = "https://www.visaovip.com"
 

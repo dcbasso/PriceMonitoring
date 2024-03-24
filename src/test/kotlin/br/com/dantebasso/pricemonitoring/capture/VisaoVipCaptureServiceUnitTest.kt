@@ -31,7 +31,8 @@ class VisaoVipCaptureServiceUnitTest {
         toTest.capture()
         verify(atLeast = 1) { processorMockk.processLine(any()) }
         verify(exactly = 1) { jobCaptureLogServiceMockk.save(any()) }
-        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any()) }
+        verify(exactly = 0) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any()) }
+        verify(exactly = 1) { emailServiceSenderMockk.sendNotificationOfFinishedTheJobProcessWithSuccess(any(), any()) }
     }
 
 }
