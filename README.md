@@ -37,7 +37,9 @@ docker push dcbasso/price-monitoring:latest
 # Supported Stores
 
 Visão VIP - [visaovip.com](https://visaovip.com/)
+
 Topdek - [topdek.com.br](https://www.topdek.com.br/br)
+
 ICompy - [icompy.com](https://icompy.com/)
 
 # Parameters
