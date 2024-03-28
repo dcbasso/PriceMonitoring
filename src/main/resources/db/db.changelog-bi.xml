@@ -555,4 +555,11 @@
         <addUniqueConstraint tableName="dimension_brand" columnNames="name" constraintName="unique_brand_name"/>
     </changeSet>
 
+    <changeSet id="insertDimensionStoreICompy" author="Dante Basso">
+        <sql>
+            INSERT INTO dimension_store (id, name)
+            VALUES (gen_random_uuid(), 'ICompy');
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

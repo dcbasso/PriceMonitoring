@@ -72,10 +72,12 @@ class VisaoVipLineProcessor @Autowired constructor(
                     logger.error("Was not possible to locate the Dimension Date")
                     return LineProcessStatus.LINE_ERROR
                 }
+            } ?: run {
+                logger.error("Line not processed, REGEX error: $line")
+                return LineProcessStatus.LINE_IGNORED
             }
         } else {
             logger.error("Line not processed: $line")
-            return LineProcessStatus.LINE_IGNORED
         }
         return LineProcessStatus.LINE_IGNORED
     }
