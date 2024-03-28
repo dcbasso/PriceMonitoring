@@ -34,6 +34,11 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t dcbasso/price-monitoring -f 
 - Uploading to docker hub:
 docker push dcbasso/price-monitoring:latest
 
+# Supported Stores
+
+Visão VIP - [visaovip.com](https://visaovip.com/)
+Topdek - [topdek.com.br](https://www.topdek.com.br/br)
+ICompy - [icompy.com](https://icompy.com/)
 
 # Parameters
 
