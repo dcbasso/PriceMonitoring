@@ -1,6 +1,6 @@
 package br.com.dantebasso.pricemonitoring.capture
 
-import br.com.dantebasso.pricemonitoring.capture.processor.TopdekLineProcessor
+import br.com.dantebasso.pricemonitoring.capture.processor.ICompyLineProcessor
 import br.com.dantebasso.pricemonitoring.models.enums.LineProcessStatus
 import br.com.dantebasso.pricemonitoring.models.control.JobCaptureLog
 import br.com.dantebasso.pricemonitoring.models.enums.JobProcessStatus
@@ -19,18 +19,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Component
-class TopdekCaptureService @Autowired constructor(
-    private val processor: TopdekLineProcessor,
+class ICompyCaptureService @Autowired constructor(
+    private val processor: ICompyLineProcessor,
     private val jobCaptureLogService: JobCaptureLogService,
     private val emailServiceSender: EmailServiceSender
 ): ICapture {
 
-    private val logger = LoggerFactory.getLogger(TopdekCaptureService::class.java)
+    private val logger = LoggerFactory.getLogger(ICompyCaptureService::class.java)
 
     companion object {
-        const val JOB_NAME = "Topdek"
-        private const val JOB_NAME_DESCRIPTION = "Topdek Capture Service"
-        private const val JOB_URL = "https://www.topdek.com.br/lista_preco.php"
+        const val JOB_NAME = "ICompy"
+        private const val JOB_NAME_DESCRIPTION = "ICompy Service"
+        private const val JOB_URL = "https://icompy.com/lista/lista.txt"
     }
 
     override fun capture() {
@@ -87,7 +87,7 @@ class TopdekCaptureService @Autowired constructor(
             val totalOfLinesIgnored = listOfResults.filter { it == LineProcessStatus.LINE_IGNORED }.size
             "$message. Total lines processed: $totalOfLinesProcessed, Total Lines with success: $totalOfLinesSuccess, Total Lines ignored: $totalOfLinesIgnored, Total Lines with error: $totalOfLinesError"
         } else {
-           message
+            message
         }
 
         val jobCaptureLog = JobCaptureLog(
@@ -107,7 +107,7 @@ class TopdekCaptureService @Autowired constructor(
     }
 
     private fun getCurlCommandLine(headers: HttpHeaders?, method: HttpMethod, body: String?): String {
-        var curlCommand = "curl -X ${method.name()} $JOB_URL"
+        var curlCommand = "curl -X ${method.name()} ${JOB_URL}"
         if (headers != null) {
             for ((key, value) in headers) {
                 val temp = value.toString().replace("[", "").replace("]", "")

@@ -1,6 +1,7 @@
 package br.com.dantebasso.pricemonitoring.capture.jobs
 
 import br.com.dantebasso.pricemonitoring.capture.ICapture
+import br.com.dantebasso.pricemonitoring.capture.ICompyCaptureService
 import br.com.dantebasso.pricemonitoring.capture.TopdekCaptureService
 import br.com.dantebasso.pricemonitoring.capture.VisaoVipCaptureService
 import br.com.dantebasso.pricemonitoring.capture.config.JobConfig
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Component
 class CaptureStoreJobs @Autowired constructor(
     private val visaoVipCaptureService: VisaoVipCaptureService,
     private val topdekCaptureService: TopdekCaptureService,
+    private val icompyCaptureService: ICompyCaptureService,
     private val jobConfig: JobConfig
 ) {
-
     private val logger = LoggerFactory.getLogger(CaptureStoreJobs::class.java)
 
     @Scheduled(cron = "\${capture.cron.scheduled}")
@@ -29,6 +30,7 @@ class CaptureStoreJobs @Autowired constructor(
         val map = HashMap<String, ICapture>()
         map[VisaoVipCaptureService.JOB_NAME.lowercase()] = visaoVipCaptureService
         map[TopdekCaptureService.JOB_NAME.lowercase()] = topdekCaptureService
+        map[ICompyCaptureService.JOB_NAME.lowercase()] = icompyCaptureService
 
         jobConfig.jobStoresList.forEach {
             if (jobConfig.isStoreJobEnabled(it)) {

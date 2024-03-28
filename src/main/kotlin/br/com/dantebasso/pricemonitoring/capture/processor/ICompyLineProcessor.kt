@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class TopdekLineProcessor @Autowired constructor(
+class ICompyLineProcessor @Autowired constructor(
     private val priceHistoryAdapter: PriceHistoryAdapter,
     private val dimensionProductService: DimensionProductService,
     private val dimensionDateService: DimensionDateService,
@@ -23,12 +23,13 @@ class TopdekLineProcessor @Autowired constructor(
 ): LineProcessor {
 
     companion object {
-        private val REGEX_LINE_VALIDATOR = Regex("^\\d+\\s+[A-Z].*?\\d+\\.\\d{2}\\s*\$")
-        private val REGEX_EXTRACT_DATA = Regex("^(\\d+)\\s+(.+?)\\s+(\\d+\\.\\d{2})\\s*$")
-        const val STORE_NAME = "Topdek"
+        private val REGEX_LINE_VALIDATOR = Regex("""^\s*\d+\s+.*\S\s+\d+\.\d+\s*$""")
+        private val REGEX_EXTRACT_DATA = Regex("""^\s*(\d+)\s+(.*?)\s+(\d+\.\d+)\s*$""")
+        private val REGEX_REMOVE_DOTS= Regex("\\.+\\s*$")
+        const val STORE_NAME = "ICompy"
     }
 
-    private val logger = LoggerFactory.getLogger(TopdekLineProcessor::class.java)
+    private val logger = LoggerFactory.getLogger(ICompyLineProcessor::class.java)
 
     /**
      *
@@ -41,7 +42,7 @@ class TopdekLineProcessor @Autowired constructor(
                 val (code, description, price) = it.destructured
                 val dimensionProduct: DimensionProduct = dimensionProductService.findProductByUniqueProductCodeOrCreate(
                     productCode = code,
-                    description = description
+                    description = description.replace(REGEX_REMOVE_DOTS, "")
                 )
                 val dimensionDate = getDimensionDate()
                 val dimensionStore = getDimensionStore()

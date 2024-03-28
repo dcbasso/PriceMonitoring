@@ -44,7 +44,7 @@ class VisaoVipCaptureService @Autowired constructor(
     }
 
     override fun capture() {
-        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(JOB_NAME)) {
+        if (!jobCaptureLogService.jobWasExecutedTodayAndWithSuccess(getJobName())) {
             val restTemplate = RestTemplate()
             val requestData = captureInfo()
             val headers = createHeaders(requestData)
@@ -88,7 +88,7 @@ class VisaoVipCaptureService @Autowired constructor(
                 )
             }
         } else {
-            logger.info("Job $JOB_NAME, already executed today ${LocalDate.now()} with success.")
+            logger.info("Job ${getJobName()}, already executed today ${LocalDate.now()} with success.")
         }
     }
 
@@ -110,12 +110,12 @@ class VisaoVipCaptureService @Autowired constructor(
             curl = curlCommand,
             status = jobProcessStatus,
             quantityOfItemsProcessed = totalOfLinesSuccess,
-            jobName = JOB_NAME,
+            jobName = getJobName(),
             message = finalMessage
         )
         jobCaptureLogService.save(jobCaptureLog)
         if (jobProcessStatus == JobProcessStatus.JOB_SUCCESS) {
-            emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(JOB_NAME, finalMessage)
+            emailServiceSender.sendNotificationOfFinishedTheJobProcessWithSuccess(getJobName(), finalMessage)
         }
     }
 

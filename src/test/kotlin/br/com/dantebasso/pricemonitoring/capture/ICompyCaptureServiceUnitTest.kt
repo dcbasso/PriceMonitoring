@@ -1,6 +1,6 @@
 package br.com.dantebasso.pricemonitoring.capture
 
-import br.com.dantebasso.pricemonitoring.capture.processor.TopdekLineProcessor
+import br.com.dantebasso.pricemonitoring.capture.processor.ICompyLineProcessor
 import br.com.dantebasso.pricemonitoring.service.JobCaptureLogService
 import br.com.dantebasso.pricemonitoring.service.mail.EmailServiceSender
 import io.mockk.impl.annotations.RelaxedMockK
@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class TopdekCaptureServiceUnitTest {
+class ICompyCaptureServiceUnitTest {
 
     @RelaxedMockK
-    lateinit var processorMockk: TopdekLineProcessor
+    lateinit var processorMockk: ICompyLineProcessor
 
     @RelaxedMockK
     lateinit var jobCaptureLogServiceMockk: JobCaptureLogService
@@ -23,7 +23,7 @@ class TopdekCaptureServiceUnitTest {
 
     @Test
     fun requestToWebsiteShouldTryProcessTheDownloadedFile() {
-        val toTest = TopdekCaptureService(
+        val toTest = ICompyCaptureService(
             processor = processorMockk,
             jobCaptureLogService = jobCaptureLogServiceMockk,
             emailServiceSender = emailServiceSenderMockk
